@@ -23,7 +23,7 @@ func TestSetRequestHeader(t *testing.T) {
 
 	header := rq.Header.Get("Y-test")
 	if header != "hiho" {
-		t.Error("header Y-test should be \"hiho\", but is %#v", header)
+		t.Errorf("header Y-test should be \"hiho\", but is %#v", header)
 	}
 
 }
