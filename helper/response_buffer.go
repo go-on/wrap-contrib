@@ -30,6 +30,14 @@ func (f *ResponseBuffer) Write(b []byte) (int, error) {
 	return f.Buffer.Write(b)
 }
 
+// Reset set the ResponseBuffer to the defaults
+func (f *ResponseBuffer) Reset() {
+	f.Buffer.Reset()
+	f.Code = 0
+	f.changed = false
+	f.header = make(http.Header)
+}
+
 // WriteTo writes header, body and status code to the given ResponseWriter, if something changed
 func (f *ResponseBuffer) WriteTo(wr http.ResponseWriter) {
 	if f.HasChanged() {
