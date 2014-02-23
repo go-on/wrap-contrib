@@ -19,4 +19,4 @@ More middleware that is tested, but may change can be found at [github.com/go-on
 Router
 ------
 
-A router that is also tested but may change, can be found at [github.com/go-on/wrap-router](https://github.com/go-on/wrap-router)
+A router that is also tested but may change, can be found at [github.com/go-on/router](https://github.com/go-on/router)
