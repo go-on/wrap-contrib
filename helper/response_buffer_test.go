@@ -6,7 +6,7 @@ import (
 )
 
 func TestResponseBufferWriteTo(t *testing.T) {
-	buf := NewResponseBuffer()
+	buf := NewResponseBuffer(nil)
 	rec, req := NewTestRequest("GET", "/")
 	Write("hi").ServeHTTP(buf, req)
 	buf.WriteTo(rec)
@@ -17,7 +17,7 @@ func TestResponseBufferWriteTo(t *testing.T) {
 }
 
 func TestResponseBufferWriteToStatus(t *testing.T) {
-	buf := NewResponseBuffer()
+	buf := NewResponseBuffer(nil)
 	rec, req := NewTestRequest("GET", "/")
 	NotFound(buf, req)
 	buf.WriteTo(rec)
@@ -32,8 +32,8 @@ func TestResponseBufferWriteToStatus(t *testing.T) {
 }
 
 func TestResponseBufferChanged(t *testing.T) {
-	buf1 := NewResponseBuffer()
-	buf2 := NewResponseBuffer()
+	buf1 := NewResponseBuffer(nil)
+	buf2 := NewResponseBuffer(nil)
 	_, req := NewTestRequest("GET", "/")
 	Write("hi").ServeHTTP(buf1, req)
 	buf1.WriteTo(buf2)
@@ -90,8 +90,8 @@ func TestResponseBufferChanged(t *testing.T) {
 }
 
 func TestResponseBufferNotChanged(t *testing.T) {
-	buf1 := NewResponseBuffer()
-	buf2 := NewResponseBuffer()
+	buf1 := NewResponseBuffer(nil)
+	buf2 := NewResponseBuffer(nil)
 	_, req := NewTestRequest("GET", "/")
 	DoNothing(buf1, req)
 	buf1.WriteTo(buf2)
@@ -118,7 +118,7 @@ func TestResponseBufferStatusCreate(t *testing.T) {
 		rw.WriteHeader(201)
 	}
 
-	buf := NewResponseBuffer()
+	buf := NewResponseBuffer(nil)
 	_, req := NewTestRequest("GET", "/")
 	writeCreate(buf, req)
 

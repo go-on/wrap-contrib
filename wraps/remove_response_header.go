@@ -15,7 +15,7 @@ type RemoveResponseHeader string
 // ServeHandle removes the response headers that are identical to the string
 // or have if as prefix after the inner handler is run
 func (rh RemoveResponseHeader) ServeHandle(inner http.Handler, w http.ResponseWriter, r *http.Request) {
-	buf := helper.NewResponseBuffer()
+	buf := helper.NewResponseBuffer(w)
 	inner.ServeHTTP(buf, r)
 
 	comp := strings.TrimSpace(strings.ToLower(string(rh)))

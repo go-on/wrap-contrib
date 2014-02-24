@@ -10,7 +10,7 @@ import (
 type first []http.Handler
 
 func (f first) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer()
+	buf := helper.NewResponseBuffer(wr)
 	for _, h := range f {
 		h.ServeHTTP(buf, req)
 		if buf.HasChanged() {

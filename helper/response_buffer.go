@@ -9,10 +9,11 @@ import (
 // http.Handlers and keep what they have written.
 // It may then be written to another (the real) ResponseWriter
 type ResponseBuffer struct {
-	Buffer  bytes.Buffer
-	Code    int
-	changed bool
-	header  http.Header
+	http.ResponseWriter // necessary to allow "Unwrap from wrapstesting"
+	Buffer              bytes.Buffer
+	Code                int
+	changed             bool
+	header              http.Header
 }
 
 // Header returns the http.Header
@@ -91,8 +92,9 @@ func (f *ResponseBuffer) WriteHeadersTo(w http.ResponseWriter) {
 }
 
 // NewResponseBuffer creates a new ResponseBuffer
-func NewResponseBuffer() (f *ResponseBuffer) {
+func NewResponseBuffer(w http.ResponseWriter) (f *ResponseBuffer) {
 	f = &ResponseBuffer{}
+	f.ResponseWriter = w
 	f.header = make(http.Header)
 	return
 }

@@ -15,7 +15,7 @@ type ContentType string
 // writes the content type, if the inner handler was successful
 // and did not set a content-type
 func (c ContentType) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer()
+	buf := helper.NewResponseBuffer(wr)
 	inner.ServeHTTP(buf, req)
 	if buf.IsOk() {
 		wr.Header().Set("Content-Type", string(c))

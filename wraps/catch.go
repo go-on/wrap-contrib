@@ -31,7 +31,7 @@ func (c CatchFunc) Catch(recovered interface{}, w http.ResponseWriter, r *http.R
 // catching any panics. If no panic happened, the ResponseBuffer is flushed to the ResponseWriter
 // Otherwise the CatchFunc is called.
 func (c CatchFunc) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer()
+	buf := helper.NewResponseBuffer(wr)
 	defer func() {
 		if p := recover(); p != nil {
 			c(p, wr, req)

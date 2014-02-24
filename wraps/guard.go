@@ -15,7 +15,7 @@ type GuardFunc func(http.ResponseWriter, *http.Request)
 // the Response is send to the ResponseWriter, preventing the inner http.Handler from
 // executing. Otherwise the inner handler serves the request.
 func (g GuardFunc) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer()
+	buf := helper.NewResponseBuffer(wr)
 	g(buf, req)
 	if buf.HasChanged() {
 		buf.WriteTo(wr)

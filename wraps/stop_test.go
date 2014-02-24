@@ -13,7 +13,7 @@ func TestStop(t *testing.T) {
 		wrap.Handler(Write("a")),
 	)
 
-	buf := NewResponseBuffer()
+	buf := NewResponseBuffer(nil)
 	_, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(buf, req)
 

@@ -31,7 +31,7 @@ func (h head) Wrap(inner http.Handler) http.Handler {
 // for the inner handler and then remove the body from the response.
 // Non HEAD reqeusts are not affected
 func (h head) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer()
+	buf := helper.NewResponseBuffer(wr)
 	if req.Method == "HEAD" {
 		req.Method = "GET"
 
