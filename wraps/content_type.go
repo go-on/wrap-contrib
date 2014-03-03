@@ -27,3 +27,15 @@ func (c ContentType) ServeHandle(inner http.Handler, wr http.ResponseWriter, req
 func (c ContentType) Wrap(inner http.Handler) http.Handler {
 	return wrap.ServeHandle(c, inner)
 }
+
+// "application/json; charset=utf-8"
+// text/plain; charset=utf-8
+// text/css; charset=utf-8
+// text/html; charset=utf-8
+// application/javascript; charset=utf-8
+
+var JSONContentType = ContentType("application/json; charset=utf-8")
+var TextContentType = ContentType("text/plain; charset=utf-8")
+var CSSContentType = ContentType("text/css; charset=utf-8")
+var HTMLContentType = ContentType("text/html; charset=utf-8")
+var JavaScriptContentType = ContentType("application/javascript; charset=utf-8")
