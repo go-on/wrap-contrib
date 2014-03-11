@@ -1,0 +1,29 @@
+{
+  "Exports": {
+    "*ResponseBuffer.Body": "(*ResponseBuffer) Body() []byte",
+    "*ResponseBuffer.BodyString": "(*ResponseBuffer) BodyString() string",
+    "*ResponseBuffer.HasChanged": "(*ResponseBuffer) HasChanged() bool",
+    "*ResponseBuffer.Header": "(*ResponseBuffer) Header() net/http.Header",
+    "*ResponseBuffer.IsOk": "(*ResponseBuffer) IsOk() bool",
+    "*ResponseBuffer.Reset": "(*ResponseBuffer) Reset()",
+    "*ResponseBuffer.Write": "(*ResponseBuffer) Write([]byte)(int,error)",
+    "*ResponseBuffer.WriteCodeTo": "(*ResponseBuffer) WriteCodeTo(net/http.ResponseWriter)",
+    "*ResponseBuffer.WriteHeader": "(*ResponseBuffer) WriteHeader(int)",
+    "*ResponseBuffer.WriteHeadersTo": "(*ResponseBuffer) WriteHeadersTo(net/http.ResponseWriter)",
+    "*ResponseBuffer.WriteTo": "(*ResponseBuffer) WriteTo(net/http.ResponseWriter)",
+    "AssertHeader": "func (*net/http/httptest.ResponseRecorder,string,string) error",
+    "AssertResponse": "func (*net/http/httptest.ResponseRecorder,string,int) error",
+    "DoNothing": "func (net/http.ResponseWriter,*net/http.Request)",
+    "JSONRequest": "func (interface{},*net/http.Request) error",
+    "JSONResponse": "func (interface{},net/http.ResponseWriter) error",
+    "NewResponseBuffer": "func (net/http.ResponseWriter) *ResponseBuffer",
+    "NewTestRequest": "func (string,string)(*net/http/httptest.ResponseRecorder,*net/http.Request)",
+    "NotFound": "func (net/http.ResponseWriter,*net/http.Request)",
+    "ResponseBuffer": "type ResponseBuffer struct { net/http.ResponseWriter; Buffer bytes.Buffer; Code int}",
+    "Write": "type Write string",
+    "Write.ServeHTTP": "(Write) ServeHTTP(net/http.ResponseWriter,*net/http.Request)",
+    "init": ""
+  },
+  "Imports": {},
+  "Path": "github.com/go-on/wrap-contrib/helper"
+}

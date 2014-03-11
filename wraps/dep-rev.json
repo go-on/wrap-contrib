@@ -1,0 +1,9 @@
+{
+  "github.com/go-on/wrap-contrib/helper": {
+    "VCM": "git",
+    "Rev": "acb923956e0f18571675a9ce27dd00f765107908",
+    "Parent": "github.com/go-on/wrap-contrib/wraps",
+    "Tag": "",
+    "RepoRoot": "github.com/go-on/wrap-contrib"
+  }
+}
