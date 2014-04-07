@@ -13,7 +13,7 @@ func methodWrite(rw http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(rw, req.Method)
 }
 
-func TestRest(t *testing.T) {
+func TestMethodOverride(t *testing.T) {
 	r := wrap.New(
 		MethodOverride(),
 		wrap.HandlerFunc(methodWrite),
@@ -32,4 +32,27 @@ func TestRest(t *testing.T) {
 			t.Errorf("override header should be removed, but is %#v", h)
 		}
 	}
+
+	rw, req := helper.NewTestRequest("GET", "/")
+	req.Header.Set(overrideHeader, "GET")
+
+	r.ServeHTTP(rw, req)
+	err := helper.AssertResponse(rw,
+		"Unsupported value for X-HTTP-Method-Override: \"GET\".\nSupported values are PUT, DELETE, PATCH and OPTIONS",
+		http.StatusPreconditionFailed)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	rw, req = helper.NewTestRequest("GET", "/")
+	req.Header.Set(overrideHeader, "PATCH")
+	r.ServeHTTP(rw, req)
+
+	err = helper.AssertResponse(rw,
+		"X-HTTP-Method-Override with value PATCH only allowed for POST requests.",
+		http.StatusPreconditionFailed)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
 }

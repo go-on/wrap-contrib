@@ -82,7 +82,7 @@ func (i ifNoneMatch) ServeHandle(in http.Handler, w http.ResponseWriter, r *http
 	buf := helper.NewResponseBuffer(w)
 	in.ServeHTTP(buf, r)
 
-	// non 2xx returns should ignire If-None-Match
+	// non 2xx returns should ignore If-None-Match
 	if !buf.IsOk() {
 		buf.WriteHeadersTo(w)
 		if buf.Code != 0 {
