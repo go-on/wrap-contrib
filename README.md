@@ -8,15 +8,16 @@ Collection of middleware (wrappers) for github.com/go-on/wrap
 Status
 ------
 100% test coverage.
-This package is considered complete, stable and ready for production.
+The API is considered stable.
+
 
 More Middleware
 ---------------
 
-More middleware that is tested, but may change can be found at [github.com/go-on/wrap-contrib-testing](https://github.com/go-on/wrap-contrib-testing)
+More (WIP,API may change) middleware can be found at [github.com/go-on/wrap-contrib-testing](https://github.com/go-on/wrap-contrib-testing)
 
 
 Router
 ------
 
-A router that is also tested but may change, can be found at [github.com/go-on/router](https://github.com/go-on/router)
+A router (WIP,API may change) can be found at [github.com/go-on/router](https://github.com/go-on/router)
