@@ -43,12 +43,13 @@ Example
 			wraps.HTMLContentType,
 			wraps.GZip,
 			wraps.ETag,
-			wraps.Before(wraps.String(`<!DOCTYPE html><html lang="en"><head></head><body>`)),
+			wraps.Before(wraps.String(
+			 `<!DOCTYPE html><html lang="en"><head></head><body>`)),
 			wraps.After(wraps.String(`</body></html>`)),
 			wraps.Catch(catcher{}),
 			wraps.Map(
-				wraps.MatchQuery("name", "peter"), wraps.String("Hello Peter, how are you?"),
-				wraps.MatchQuery("name", "mary"), wraps.String("Hello Mary, whats up?"),
+				wraps.MatchQuery("name", "peter"), wraps.String("Hi Peter!"),
+				wraps.MatchQuery("name", "mary"), wraps.String("Hello Mary!"),
 				wraps.MatchQuery("name", "mister-x"), panicker{},
 			),
 			wraps.String(`
