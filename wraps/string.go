@@ -5,6 +5,15 @@ import (
 	"net/http"
 )
 
+type String string
+
+func (s String) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	fmt.Fprint(rw, s)
+}
+
+// Wrap wraps the given inner handler with the returned handler
+func (s String) Wrap(http.Handler) http.Handler { return s }
+
 func wrtStr(s string, contentType string, rw http.ResponseWriter) {
 	rw.Header().Set("Content-Type", contentType)
 	fmt.Fprint(rw, s)
