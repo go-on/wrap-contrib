@@ -17,6 +17,7 @@ func TestString(t *testing.T) {
 		stringTest{"my json", "application/json; charset=utf-8"}:     wrap.New(JSONString("my json")),
 		stringTest{"my js", "application/javascript; charset=utf-8"}: wrap.New(JavaScriptString("my js")),
 		stringTest{"my html", "text/html; charset=utf-8"}:            wrap.New(HTMLString("my html")),
+		stringTest{"just string", ""}:                                wrap.New(String("just string")),
 	}
 
 	for expected, handler := range tests {
