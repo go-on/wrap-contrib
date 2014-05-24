@@ -16,6 +16,30 @@ func TestResponseBufferWriteTo(t *testing.T) {
 	}
 }
 
+func TestResponseBufferReset(t *testing.T) {
+	buf := NewResponseBuffer(nil)
+	_, req := NewTestRequest("GET", "/")
+	Write("hi").ServeHTTP(buf, req)
+
+	buf.Reset()
+	if buf.Code != 0 {
+		t.Errorf("wrong code, expecting 0, got %d", buf.Code)
+	}
+
+	if len(buf.header) != 0 {
+		t.Errorf("header is not empty")
+	}
+
+	if buf.BodyString() != "" {
+		t.Errorf("body is not empty")
+	}
+
+	if buf.HasChanged() {
+		t.Errorf("HasChanged should return false")
+	}
+
+}
+
 func TestResponseBufferWriteToStatus(t *testing.T) {
 	buf := NewResponseBuffer(nil)
 	rec, req := NewTestRequest("GET", "/")
