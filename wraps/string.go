@@ -5,8 +5,11 @@ import (
 	"net/http"
 )
 
+// String is an utf-8 string that is a http.Handler
+// and a wrap.Wrapper
 type String string
 
+// ServeHTTP writes the String to the http.ResponseWriter
 func (s String) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(rw, s)
 }
