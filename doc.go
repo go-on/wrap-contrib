@@ -8,7 +8,7 @@ Package wrapcontrib provides middleware (wraps) and helpers for github.com/go-on
 Status
 
 100% test coverage.
-This package is considered complete and the API is stable.
+This package is considered complete and the API is stable  (with the exception of the helper subpackage).
 
 More Middleware
 
