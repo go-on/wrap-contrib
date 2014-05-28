@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 /*
-Package wrapcontrib provides middleware (wraps) and helpers for github.com/go-on/wrap.
+Package wrapcontrib provides middleware (wraps) and helpers for http://github.com/go-on/wrap.
 
 Status
 
