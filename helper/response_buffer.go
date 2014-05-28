@@ -40,7 +40,7 @@ func (f *ResponseBuffer) Reset() {
 }
 
 // WriteTo writes header, body and status code to the given ResponseWriter, if something changed
-func (f *ResponseBuffer) WriteTo(wr http.ResponseWriter) {
+func (f *ResponseBuffer) WriteAllTo(wr http.ResponseWriter) {
 	if f.HasChanged() {
 		f.WriteHeadersTo(wr)
 		f.WriteCodeTo(wr)

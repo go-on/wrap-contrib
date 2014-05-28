@@ -88,7 +88,7 @@ func (i ifNoneMatch) ServeHandle(in http.Handler, w http.ResponseWriter, r *http
 		if buf.Code != 0 {
 			w.WriteHeader(buf.Code)
 		}
-		buf.WriteTo(w)
+		buf.WriteAllTo(w)
 		return
 	}
 
@@ -109,7 +109,7 @@ func (i ifNoneMatch) ServeHandle(in http.Handler, w http.ResponseWriter, r *http
 	if buf.Code != 0 {
 		buf.WriteCodeTo(w)
 	}
-	buf.WriteTo(w)
+	buf.WriteAllTo(w)
 }
 
 func (i ifNoneMatch) Wrap(inner http.Handler) http.Handler {

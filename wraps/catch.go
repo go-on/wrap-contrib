@@ -36,7 +36,7 @@ func (c CatchFunc) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *
 		if p := recover(); p != nil {
 			c(p, wr, req)
 		} else {
-			buf.WriteTo(wr)
+			buf.WriteAllTo(wr)
 		}
 	}()
 	inner.ServeHTTP(buf, req)

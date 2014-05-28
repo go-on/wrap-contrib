@@ -25,7 +25,7 @@ func (c ContentType) ServeHandle(inner http.Handler, wr http.ResponseWriter, req
 	if buf.IsOk() {
 		c.SetContentType(wr)
 	}
-	buf.WriteTo(wr)
+	buf.WriteAllTo(wr)
 }
 
 // Wrap wraps the given inner handler with the returned handler

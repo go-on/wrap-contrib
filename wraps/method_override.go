@@ -24,7 +24,7 @@ func (ø methodOverride) ServeHandle(in http.Handler, w http.ResponseWriter, r *
 	override := r.Header.Get(overrideHeader)
 
 	if override != "" {
-		// fmt.Println("override", override)
+		fmt.Println("override", override)
 		expectedMethod, accepted := acceptedOverrides[override]
 		if !accepted {
 			w.WriteHeader(http.StatusPreconditionFailed)

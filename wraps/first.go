@@ -14,7 +14,7 @@ func (f first) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http
 	for _, h := range f {
 		h.ServeHTTP(buf, req)
 		if buf.HasChanged() {
-			buf.WriteTo(wr)
+			buf.WriteAllTo(wr)
 			return
 		}
 	}

@@ -1,9 +1,9 @@
 package wraps
 
 import (
+	"github.com/go-on/wrap-contrib/helper"
 	"net/http"
 	"strings"
-	"github.com/go-on/wrap-contrib/helper"
 
 	"github.com/go-on/wrap"
 )
@@ -27,7 +27,7 @@ func (rh RemoveResponseHeader) ServeHandle(inner http.Handler, w http.ResponseWr
 		}
 	}
 
-	buf.WriteTo(w)
+	buf.WriteAllTo(w)
 }
 
 // Wrap wraps the given inner handler with the returned handler

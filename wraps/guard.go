@@ -18,7 +18,7 @@ func (g GuardFunc) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *
 	buf := helper.NewResponseBuffer(wr)
 	g(buf, req)
 	if buf.HasChanged() {
-		buf.WriteTo(wr)
+		buf.WriteAllTo(wr)
 		return
 	}
 	inner.ServeHTTP(wr, req)
