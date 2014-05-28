@@ -9,7 +9,7 @@ func TestResponseBufferWriteTo(t *testing.T) {
 	buf := NewResponseBuffer(nil)
 	rec, req := NewTestRequest("GET", "/")
 	Write("hi").ServeHTTP(buf, req)
-	buf.WriteTo(rec)
+	buf.WriteAllTo(rec)
 	err := AssertResponse(rec, "hi", 200)
 	if err != nil {
 		t.Error(err)
@@ -44,7 +44,7 @@ func TestResponseBufferWriteToStatus(t *testing.T) {
 	buf := NewResponseBuffer(nil)
 	rec, req := NewTestRequest("GET", "/")
 	NotFound(buf, req)
-	buf.WriteTo(rec)
+	buf.WriteAllTo(rec)
 	err := AssertResponse(rec, "not found", 404)
 	if err != nil {
 		t.Error(err)
@@ -60,7 +60,7 @@ func TestResponseBufferChanged(t *testing.T) {
 	buf2 := NewResponseBuffer(nil)
 	_, req := NewTestRequest("GET", "/")
 	Write("hi").ServeHTTP(buf1, req)
-	buf1.WriteTo(buf2)
+	buf1.WriteAllTo(buf2)
 
 	if buf1.BodyString() != "hi" {
 		t.Errorf("body string of buf1 should be \"hi\" but is :%#v", buf1.BodyString())
@@ -118,7 +118,7 @@ func TestResponseBufferNotChanged(t *testing.T) {
 	buf2 := NewResponseBuffer(nil)
 	_, req := NewTestRequest("GET", "/")
 	DoNothing(buf1, req)
-	buf1.WriteTo(buf2)
+	buf1.WriteAllTo(buf2)
 
 	if buf1.HasChanged() {
 		t.Error("buf1 is changed, but should not be")
