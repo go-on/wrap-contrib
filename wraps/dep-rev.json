@@ -8,7 +8,7 @@
   },
   "github.com/go-on/wrap-contrib/helper": {
     "VCM": "git",
-    "Rev": "56c96387c10ff66cdfaee485da14fcf85a877e51",
+    "Rev": "23107397b265c42c2e7f49d1c2231fc1867e2c2e",
     "Parent": "github.com/go-on/wrap-contrib/wraps",
     "Tag": "",
     "RepoRoot": "github.com/go-on/wrap-contrib"
