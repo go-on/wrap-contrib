@@ -5,6 +5,8 @@
 /*
 Package wrapcontrib provides middleware (wraps) and helpers for http://github.com/go-on/wrap.
 
+A walk through some of the middlewares can be found at http://metakeule.github.io/article/tour-de-wrap-middleware.html.
+
 Status
 
 100% test coverage.
