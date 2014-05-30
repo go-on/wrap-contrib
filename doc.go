@@ -14,7 +14,7 @@ This package is considered complete and the API is stable  (with the exception o
 
 More Middleware
 
-More (WIP,API may change) middleware can be found at github.com/go-on/wrap-contrib-testing
+More (WIP,API may change) middleware can be found at http://github.com/go-on/wrap-contrib-testing
 
 Example
 
