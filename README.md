@@ -5,6 +5,8 @@ Collection of middleware (wrappers) for [github.com/go-on/wrap](http://github.co
 
 [![Build Status](https://secure.travis-ci.org/go-on/wrap-contrib.png)](http://travis-ci.org/go-on/wrap-contrib)
 
+[![GoDoc](https://godoc.org/github.com/go-on/wrap-contrib?status.png)](https://godoc.org/github.com/go-on/wrap-contrib)
+
 Status
 ------
 100% test coverage.
