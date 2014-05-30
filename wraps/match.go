@@ -17,15 +17,13 @@ func (mf MatchFunc) Match(req *http.Request) bool {
 
 func And(ms ...Matcher) Matcher {
 	return MatchFunc(
-		func(req *http.Request) (doesMatch bool) {
-			doesMatch = true
+		func(req *http.Request) bool {
 			for _, m := range ms {
 				if !m.Match(req) {
-					doesMatch = false
-					break
+					return false
 				}
 			}
-			return
+			return true
 		},
 	)
 }
