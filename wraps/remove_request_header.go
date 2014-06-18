@@ -11,9 +11,7 @@ import (
 // or have it as prefix
 type RemoveRequestHeader string
 
-// ServeHandle removes request headers that are identical to the string
-// or have it as prefix. Then the inner http.Handler is called
-func (rh RemoveRequestHeader) ServeHandle(inner http.Handler, w http.ResponseWriter, r *http.Request) {
+func (rh RemoveRequestHeader) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	comp := strings.TrimSpace(strings.ToLower(string(rh)))
 	for k := range r.Header {
 		k = strings.TrimSpace(strings.ToLower(k))
@@ -21,6 +19,12 @@ func (rh RemoveRequestHeader) ServeHandle(inner http.Handler, w http.ResponseWri
 			r.Header.Del(k)
 		}
 	}
+}
+
+// ServeHandle removes request headers that are identical to the string
+// or have it as prefix. Then the inner http.Handler is called
+func (rh RemoveRequestHeader) ServeHandle(inner http.Handler, w http.ResponseWriter, r *http.Request) {
+	rh.ServeHTTP(w, r)
 	inner.ServeHTTP(w, r)
 }
 
