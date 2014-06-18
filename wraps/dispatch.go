@@ -10,6 +10,20 @@ type Dispatcher interface {
 	Dispatch(*http.Request) http.Handler
 }
 
+type StructDispatcher interface {
+	New(*http.Request) http.HandlerFunc
+}
+
+type FuncDispatcher func(*http.Request) http.HandlerFunc
+
+func (fd FuncDispatcher) Dispatch(r *http.Request) http.Handler {
+	h := fd(r)
+	if h == nil {
+		return nil
+	}
+	return h
+}
+
 type DispatchFunc func(*http.Request) http.Handler
 
 func (df DispatchFunc) Dispatch(r *http.Request) http.Handler {
@@ -39,6 +53,14 @@ func (df DispatchFunc) Wrap(inner http.Handler) (out http.Handler) {
 
 func Dispatch(d Dispatcher) DispatchFunc {
 	return DispatchFunc(d.Dispatch)
+}
+
+func FuncDispatch(fn FuncDispatcher) DispatchFunc {
+	return Dispatch(fn)
+}
+
+func StructDispatch(stru StructDispatcher) DispatchFunc {
+	return FuncDispatch(stru.New)
 }
 
 type matchHandler struct {

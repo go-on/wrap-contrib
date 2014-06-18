@@ -1,6 +1,7 @@
 package wraps
 
 import (
+	"fmt"
 	"net/http"
 	"regexp"
 	"testing"
@@ -11,6 +12,32 @@ import (
 
 type dispatchQ struct {
 	method, path string
+}
+
+type context struct{ d, e string }
+
+func (c *context) black(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "black: d is %#v e is %#v", c.d, c.e)
+}
+
+func (c *context) white(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "white: d is %#v e is %#v", c.d, c.e)
+}
+
+// note that this is not a pointer method, so every call is on a fresh instance
+func (c context) New(req *http.Request) http.HandlerFunc {
+	q := req.URL.Query()
+	c.d = q.Get("d")
+	c.e = q.Get("e")
+
+	switch req.URL.Path {
+	case "/context/black":
+		return c.black
+	case "/context/white":
+		return c.white
+	default:
+		return nil
+	}
 }
 
 func TestDispatch(t *testing.T) {
@@ -66,6 +93,7 @@ func TestDispatch(t *testing.T) {
 		&MethodHandler{
 			OPTIONS: Write("my options"),
 		},
+		StructDispatch(context{}),
 		DispatchFunc(dispatchFnA),
 		Dispatch(DispatchFunc(dispatchFnB)),
 		wrap.Handler(GETHandler("/hu", Write("get hu"))),
@@ -104,6 +132,9 @@ func TestDispatch(t *testing.T) {
 		dispatchQ{"GET", "/xyz"}: "",
 
 		dispatchQ{"GET", "/person/customer/6"}: "person customers",
+
+		dispatchQ{"GET", "/context/black?d=ddd&e=eee"}:   `black: d is "ddd" e is "eee"`,
+		dispatchQ{"GET", "/context/white?d=dddd&e=eeee"}: `white: d is "dddd" e is "eeee"`,
 	}
 
 	for q, res := range tests {
