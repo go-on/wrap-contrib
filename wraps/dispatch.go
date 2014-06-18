@@ -10,6 +10,12 @@ type Dispatcher interface {
 	Dispatch(*http.Request) http.Handler
 }
 
+// StructDispatcher is a dispatcher that has a New method to dispatch
+// requests to http.HandlerFunc. Common use case is a struct that allows
+// to share and reuse state. The method New then must be defined on the
+// struct itself and not on a pointer of the struct.
+// New would then return pointer methods that are handler funcs that share
+// the state.
 type StructDispatcher interface {
 	New(*http.Request) http.HandlerFunc
 }
