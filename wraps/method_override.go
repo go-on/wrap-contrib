@@ -20,8 +20,9 @@ var acceptedOverrides = map[string]string{
 
 var overrideHeader = "X-HTTP-Method-Override"
 
-func (ø methodOverride) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Request) {
+func (ø methodOverride) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	override := r.Header.Get(overrideHeader)
+	// fmt.Printf("method override called: %v\n", override)
 
 	if override != "" {
 		// fmt.Println("override", override)
@@ -43,9 +44,11 @@ Supported values are PUT, DELETE, PATCH and OPTIONS`, overrideHeader, override)
 		r.Header.Del(overrideHeader)
 		r.Method = override
 	}
+}
 
+func (ø methodOverride) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Request) {
+	ø.ServeHTTP(w, r)
 	in.ServeHTTP(w, r)
-
 }
 
 func (ø methodOverride) Wrap(in http.Handler) (out http.Handler) {
