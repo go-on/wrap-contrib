@@ -47,7 +47,29 @@ Supported values are PUT, DELETE, PATCH and OPTIONS`, overrideHeader, override)
 }
 
 func (ø methodOverride) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Request) {
-	ø.ServeHTTP(w, r)
+	override := r.Header.Get(overrideHeader)
+	// fmt.Printf("method override called: %v\n", override)
+
+	if override != "" {
+		// fmt.Println("override", override)
+		expectedMethod, accepted := acceptedOverrides[override]
+		if !accepted {
+			w.WriteHeader(http.StatusPreconditionFailed)
+			fmt.Fprintf(w, `Unsupported value for %s: %#v.
+Supported values are PUT, DELETE, PATCH and OPTIONS`, overrideHeader, override)
+			return
+		}
+
+		if expectedMethod != r.Method {
+			w.WriteHeader(http.StatusPreconditionFailed)
+			fmt.Fprintf(w, `%s with value %s only allowed for %s requests.`,
+				overrideHeader, override, expectedMethod)
+			return
+		}
+		// everything went fine, override the method
+		r.Header.Del(overrideHeader)
+		r.Method = override
+	}
 	in.ServeHTTP(w, r)
 }
 
