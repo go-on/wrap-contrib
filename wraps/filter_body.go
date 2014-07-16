@@ -14,8 +14,7 @@ type filterBody struct {
 
 func (f *filterBody) Wrap(in http.Handler) (out http.Handler) {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ver, _ := method.StringToMethod[r.Method]
-		if f.method&ver == 0 {
+		if !f.method.Is(r.Method) {
 			in.ServeHTTP(w, r)
 			return
 		}

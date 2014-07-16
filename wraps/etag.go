@@ -12,7 +12,7 @@ import (
 	"github.com/go-on/wrap-contrib/helper"
 )
 
-var etagMethods = method.GET | method.HEAD
+// var etagMethods = method.GET | method.HEAD
 
 type etag struct{}
 
@@ -22,7 +22,8 @@ func (e etag) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Reques
 	buf := helper.NewResponseBuffer(w)
 	// fmt.Printf("in is %T\n", in)
 	in.ServeHTTP(buf, r)
-	m, _ := method.StringToMethod[r.Method]
+	m := method.Method(r.Method)
+	// m, _ := method.StringToMethod[r.Method]
 	b := buf.Body()
 
 	//	if fake.IsOk() && fake.WHeader != 206 {
@@ -39,7 +40,7 @@ func (e etag) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Reques
 				etag = fmt.Sprintf("%x", h.Sum(nil))
 			}
 		}
-		if etag != "" && etagMethods&m != 0 {
+		if etag != "" && m.MayHaveEtag() {
 			// fmt.Printf("setting ETag to: %#v for  method %s\n", etag, m.String())
 			buf.Header().Set("ETag", etag)
 		}
@@ -72,9 +73,10 @@ func (i ifNoneMatch) ServeHandle(in http.Handler, w http.ResponseWriter, r *http
 		return
 	}
 
-	ver, _ := method.StringToMethod[r.Method]
+	// ver, _ := method.StringToMethod[r.Method]
+	ver := method.Method(r.Method)
 	// return 412 for method other than GET and HEAD
-	if etagMethods&ver == 0 {
+	if !ver.MayHaveEtag() {
 		w.WriteHeader(412) // precondition failed
 		return
 	}
@@ -120,7 +122,18 @@ type ifMatch struct {
 	http.Handler
 }
 
-var ifMatchMethods = method.GET | method.PUT | method.DELETE | method.PATCH
+//var ifMatchMethods = method.GET | method.PUT | method.DELETE | method.PATCH
+
+/*
+func isIfMatchMethod(m method.Method) bool {
+	switch m {
+	case method.GET, method.PUT, method.DELETE, method.PATCH:
+		return true
+	default:
+		return false
+	}
+}
+*/
 
 // Wo macht If-Match sinn?
 // Get, Put, Patch, Delete, alle mit ressource
@@ -142,9 +155,10 @@ func (i *ifMatch) Wrap(in http.Handler) (out http.Handler) {
 
 		r.Header.Del("If-Match")
 
-		m, _ := method.StringToMethod[r.Method]
+		// m, _ := method.StringToMethod[r.Method]
+		m := method.Method(r.Method)
 		// return 412 for method other than GET and PUT and DELETE and PATCH
-		if ifMatchMethods&m == 0 {
+		if !m.MayHaveIfMatch() {
 			// fmt.Println("precondition failed, method", m.String())
 			w.WriteHeader(412) // precondition failed
 			return
@@ -168,7 +182,7 @@ func (i *ifMatch) Wrap(in http.Handler) (out http.Handler) {
 		// fmt.Printf("real headers: %#v\n", w.Header())
 
 		if etag == "" || etag != ifmatch {
-			if etag != "" && etagMethods&m != 0 {
+			if etag != "" && m.MayHaveEtag() {
 				w.Header().Set("ETag", etag)
 			}
 			// fmt.Println("precondition failed, etag does not match")
