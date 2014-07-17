@@ -46,7 +46,7 @@ func TestMethodOverride(t *testing.T) {
 
 	rw, req = helper.NewTestRequest("GET", "/")
 	req.Header.Set(overrideHeader, "PATCH")
-	r.ServeHTTP(rw, req)
+	MethodOverride().ServeHTTP(rw, req)
 
 	err = helper.AssertResponse(rw,
 		"X-HTTP-Method-Override with value PATCH only allowed for POST requests.",

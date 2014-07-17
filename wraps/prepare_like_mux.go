@@ -35,6 +35,8 @@ func PrepareLikeMux() wrap.Wrapper {
 
 func (p prepareLikeMux) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, rq *http.Request) {
+		// println(rq.RequestURI)
+		// fmt.Printf("RequestURI: %#v\n", rq.RequestURI)
 		if rq.RequestURI == "*" {
 			if rq.ProtoAtLeast(1, 1) {
 				w.Header().Set("Connection", "close")
