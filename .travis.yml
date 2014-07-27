@@ -6,7 +6,6 @@ go:
 install:
   - go get github.com/go-on/wrap
   - go get github.com/go-on/method
-  - go get github.com/go-on/wrap-contrib-testing/wrapstesting
 script:
   - cd wraps
   - go get code.google.com/p/go.tools/cmd/cover
