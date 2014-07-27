@@ -11,7 +11,7 @@ import (
 func TestContentTypeNothing(t *testing.T) {
 	h := wrap.New(
 		ContentType("my/contenttype"),
-		wrap.HandlerFunc(DoNothing),
+		wrap.Handler(TextString("hu")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

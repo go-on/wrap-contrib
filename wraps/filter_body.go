@@ -12,20 +12,19 @@ type filterBody struct {
 	method method.Method
 }
 
-func (f *filterBody) Wrap(in http.Handler) (out http.Handler) {
+func (f *filterBody) Wrap(next http.Handler) (out http.Handler) {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !f.method.Is(r.Method) {
-			in.ServeHTTP(w, r)
+			next.ServeHTTP(w, r)
 			return
 		}
 
-		buf := helper.NewResponseBuffer(w)
-		in.ServeHTTP(buf, r)
-		buf.WriteHeadersTo(w)
-
-		if buf.Code != 0 {
-			w.WriteHeader(buf.Code)
-		}
+		checked := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
+			ck.WriteHeadersTo(w)
+			ck.WriteCodeTo(w)
+			return false
+		})
+		next.ServeHTTP(checked, r)
 	})
 }
 

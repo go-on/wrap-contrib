@@ -10,11 +10,15 @@ import (
 type first []http.Handler
 
 func (f first) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer(wr)
+	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+		ck.WriteHeadersTo(wr)
+		ck.WriteCodeTo(wr)
+		return true
+	})
+
 	for _, h := range f {
-		h.ServeHTTP(buf, req)
-		if buf.HasChanged() {
-			buf.WriteAllTo(wr)
+		h.ServeHTTP(checked, req)
+		if checked.HasChanged() {
 			return
 		}
 	}

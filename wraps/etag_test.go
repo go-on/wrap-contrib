@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib-testing/wrapstesting"
 	"github.com/go-on/wrap-contrib/helper"
 	// "fmt"
 	//. "launchpad.net/gocheck"
@@ -41,12 +40,13 @@ func (c *ctx2) Put(w http.ResponseWriter, r *http.Request) {
 
 //func (s *etagSuite) TestETagIfNoneMatch(c *C) {
 func TestETagIfNoneMatch(t *testing.T) {
+	c := &ctx2{}
 	r := wrap.New(
 		// LOGGER("If-None-Match"),
 		IfNoneMatch,
 		// LOGGER("ETag"),
 		ETag,
-		wrap.Handler(wrapstesting.HandlerMethod((*ctx2).ServeHTTP)),
+		wrap.HandlerFunc(c.ServeHTTP),
 	)
 
 	r1 := wrap.New(
@@ -54,7 +54,7 @@ func TestETagIfNoneMatch(t *testing.T) {
 		IfNoneMatch,
 		// LOGGER("ETag"),
 		ETag,
-		wrap.Handler(wrapstesting.HandlerMethod((*ctx2).ServeHTTP2)),
+		wrap.HandlerFunc(c.ServeHTTP2),
 	)
 
 	r2 := wrap.New(
@@ -62,7 +62,7 @@ func TestETagIfNoneMatch(t *testing.T) {
 		IfNoneMatch,
 		// LOGGER("ETag"),
 		ETag,
-		wrap.Handler(wrapstesting.HandlerMethod((*ctx2).ServeHTTP3)),
+		wrap.HandlerFunc(c.ServeHTTP3),
 	)
 
 	rw, req := helper.NewTestRequest("GET", "/path")
@@ -146,14 +146,15 @@ func TestETagIfNoneMatch(t *testing.T) {
 
 //func (s *etagSuite) TestETagIfMatch(c *C) {
 func TestETagIfMatch(t *testing.T) {
+	c := &ctx2{}
 	r0 := wrap.New(
 		ETag,
-		wrap.Handler(&ctx2{}),
+		wrap.Handler(c),
 		// LOGGER("ETag"),
 	)
 	r1 := wrap.New(
 		IfMatch(r0),
-		wrap.Handler(wrapstesting.HandlerMethod((*ctx2).Put)),
+		wrap.HandlerFunc(c.Put),
 		// LOGGER("IfMatch"),
 		// LOGGER("PUT"),
 	)
@@ -184,7 +185,7 @@ func TestETagIfMatch(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 
-	rw, req = helper.NewTestRequest("PUT", "/path/")
+	rw, req = helper.NewTestRequest("PATCH", "/path/")
 	req.Header.Set("If-Match", fmt.Sprintf("%#v", _et))
 	r1.ServeHTTP(rw, req)
 
@@ -235,12 +236,35 @@ func TestETagIfMatch(t *testing.T) {
 }
 
 func TestETag(t *testing.T) {
+	c := &ctx2{}
 	r2 := wrap.New(
 		ETag,
-		wrap.Handler(wrapstesting.HandlerMethod((*ctx2).ServeHTTP2)),
+		wrap.HandlerFunc(c.ServeHTTP2),
 		// LOGGER("ETag"),
 	)
 	rw, req := helper.NewTestRequest("GET", "/path/")
+	r2.ServeHTTP(rw, req)
+	_et2 := rw.Header().Get("ETag")
+
+	err := helper.AssertResponse(rw, "~/path/~", 302)
+
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if _et2 != "" {
+		t.Errorf("wrong etag: %#v should be %#v", _et2, "")
+	}
+}
+
+func TestNoETag(t *testing.T) {
+	c := &ctx2{}
+	r2 := wrap.New(
+		ETag,
+		wrap.HandlerFunc(c.ServeHTTP2),
+		// LOGGER("ETag"),
+	)
+	rw, req := helper.NewTestRequest("POST", "/path/")
 	r2.ServeHTTP(rw, req)
 	_et2 := rw.Header().Get("ETag")
 

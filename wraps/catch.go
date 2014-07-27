@@ -27,24 +27,28 @@ func (c CatchFunc) Catch(recovered interface{}, w http.ResponseWriter, r *http.R
 	c(recovered, w, r)
 }
 
-// ServeHandle serves the given request by letting the inner serve a ResponseBuffer and
+// ServeHandle serves the given request by letting the next serve a ResponseBuffer and
 // catching any panics. If no panic happened, the ResponseBuffer is flushed to the ResponseWriter
 // Otherwise the CatchFunc is called.
-func (c CatchFunc) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer(wr)
+func (c CatchFunc) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 	defer func() {
 		if p := recover(); p != nil {
 			c(p, wr, req)
-		} else {
-			buf.WriteAllTo(wr)
 		}
 	}()
-	inner.ServeHTTP(buf, req)
+
+	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+		ck.WriteHeadersTo(wr)
+		ck.WriteCodeTo(wr)
+		return true
+	})
+
+	next.ServeHTTP(checked, req)
 }
 
-// Wrap wraps the given inner handler with the returned handler
-func (c CatchFunc) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(c, inner)
+// Wrap wraps the given next handler with the returned handler
+func (c CatchFunc) Wrap(next http.Handler) http.Handler {
+	return wrap.ServeHandle(c, next)
 }
 
 // Catch returns a CatchFunc for a Catcher

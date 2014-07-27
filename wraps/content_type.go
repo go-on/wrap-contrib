@@ -1,13 +1,14 @@
 package wraps
 
 import (
-	"github.com/go-on/wrap-contrib/helper"
 	"net/http"
+
+	"github.com/go-on/wrap-contrib/helper"
 
 	"github.com/go-on/wrap"
 )
 
-// ContentType writes the content type if the inner handler was successful
+// ContentType writes the content type if the next handler was successful
 // and did not set a content-type
 type ContentType string
 
@@ -16,21 +17,25 @@ func (c ContentType) SetContentType(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", string(c))
 }
 
-// ServeHandle serves the given request with the inner handler and after that
-// writes the content type, if the inner handler was successful
+// ServeHandle serves the given request with the next handler and after that
+// writes the content type, if the next handler was successful
 // and did not set a content-type
-func (c ContentType) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer(wr)
-	inner.ServeHTTP(buf, req)
-	if buf.IsOk() {
-		c.SetContentType(wr)
-	}
-	buf.WriteAllTo(wr)
+func (c ContentType) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
+	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+		if ck.IsOk() {
+			c.SetContentType(ck)
+		}
+		ck.WriteHeadersTo(wr)
+		ck.WriteCodeTo(wr)
+		return true
+	})
+
+	next.ServeHTTP(checked, req)
 }
 
-// Wrap wraps the given inner handler with the returned handler
-func (c ContentType) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(c, inner)
+// Wrap wraps the given next handler with the returned handler
+func (c ContentType) Wrap(next http.Handler) http.Handler {
+	return wrap.ServeHandle(c, next)
 }
 
 var (

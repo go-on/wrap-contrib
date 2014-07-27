@@ -1,8 +1,10 @@
 package wraps
 
 import (
+	"bytes"
 	"crypto/md5"
 	"fmt"
+	"hash"
 	"io"
 	"net/http"
 	"strings"
@@ -18,40 +20,44 @@ type etag struct{}
 
 var ETag = etag{}
 
-func (e etag) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Request) {
-	buf := helper.NewResponseBuffer(w)
-	// fmt.Printf("in is %T\n", in)
-	in.ServeHTTP(buf, r)
+type etaggedWriter struct {
+	*helper.CheckedResponseWriter
+	h   hash.Hash
+	buf *bytes.Buffer
+}
+
+func (et *etaggedWriter) Write(b []byte) (num int, err error) {
+	if et.buf != nil {
+		num, err = et.buf.Write(b)
+	}
+	if et.IsOk() {
+		et.h.Write(b)
+	}
+	return 0, io.EOF
+}
+
+func (e etag) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	m := method.Method(r.Method)
-	// m, _ := method.StringToMethod[r.Method]
-	b := buf.Body()
 
-	//	if fake.IsOk() && fake.WHeader != 206 {
-
-	// fmt.Println("Status code", buf.Code)
-	// set etag only for status code 200
-	if buf.Code == 0 || buf.Code == 200 {
-		var etag string
-		h := md5.New()
-		_, err := io.Copy(h, &buf.Buffer)
-		if err == nil {
-			// _, err = io.WriteString(h, r.URL.Path)
-			if err == nil {
-				etag = fmt.Sprintf("%x", h.Sum(nil))
-			}
-		}
-		if etag != "" && m.MayHaveEtag() {
-			// fmt.Printf("setting ETag to: %#v for  method %s\n", etag, m.String())
-			buf.Header().Set("ETag", etag)
-		}
+	if !m.MayHaveEtag() {
+		next.ServeHTTP(w, r)
+		return
 	}
+	et := &etaggedWriter{h: md5.New(), CheckedResponseWriter: helper.NewCheckedResponseWriter(w, nil)}
 
-	buf.WriteHeadersTo(w)
-	if buf.Code != 0 {
-		w.WriteHeader(buf.Code)
-	}
+	// cache for non HEAD methods
 	if m != method.HEAD {
-		w.Write(b)
+		et.buf = bytes.NewBuffer(nil)
+	}
+
+	next.ServeHTTP(et, r)
+	if et.IsOk() {
+		et.Header().Set("ETag", fmt.Sprintf("%x", et.h.Sum(nil)))
+	}
+	et.WriteHeadersTo(w)
+	et.WriteCodeTo(w)
+	if et.buf != nil {
+		et.buf.WriteTo(w)
 	}
 }
 
@@ -64,133 +70,147 @@ type ifNoneMatch struct{}
 var IfNoneMatch = ifNoneMatch{}
 
 // see http://www.freesoft.org/CIE/RFC/2068/187.htm
-func (i ifNoneMatch) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Request) {
+func (i ifNoneMatch) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	ifnone := r.Header.Get("If-None-Match")
 	ifnone = strings.Trim(ifnone, `"`)
 	// proceed as normal
 	if ifnone == "" {
-		in.ServeHTTP(w, r)
+		next.ServeHTTP(w, r)
 		return
 	}
 
-	// ver, _ := method.StringToMethod[r.Method]
-	ver := method.Method(r.Method)
+	r.Header.Del("If-None-Match")
+
+	m := method.Method(r.Method)
 	// return 412 for method other than GET and HEAD
-	if !ver.MayHaveEtag() {
-		w.WriteHeader(412) // precondition failed
+	if !m.MayHaveEtag() {
+		w.WriteHeader(http.StatusPreconditionFailed)
 		return
 	}
 
-	buf := helper.NewResponseBuffer(w)
-	in.ServeHTTP(buf, r)
-
-	// non 2xx returns should ignore If-None-Match
-	if !buf.IsOk() {
-		buf.WriteHeadersTo(w)
-		if buf.Code != 0 {
-			w.WriteHeader(buf.Code)
+	checked := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
+		ck.WriteHeadersTo(w)
+		// non 2xx returns should ignore If-None-Match
+		if !ck.IsOk() {
+			ck.WriteCodeTo(w)
+			return true
 		}
-		buf.WriteAllTo(w)
-		return
-	}
 
-	buf.WriteHeadersTo(w)
+		// if we have an etag and If-None-Match == * or if the If-None-Match header matches
+		// do not write the body, but only return the ETag and 304 (not modified) status
+		etag := w.Header().Get("ETag")
+		if (ifnone == "*" && etag != "") || ifnone == etag {
+			w.WriteHeader(http.StatusNotModified)
+			return false
+		}
+		ck.WriteCodeTo(w)
+		return true
+	})
 
-	// if we have an etag and If-None-Match == * or if the If-None-Match header matches
-	// do nothing, but only return the ETag and 304 status
-	// fmt.Printf("fake headers: %#v\n", fake.Header())
-	etag := buf.Header().Get("ETag")
-
-	// fmt.Println("ifnonematch", ifnone, "etag", etag)
-	if (ifnone == "*" && etag != "") || ifnone == etag {
-		w.WriteHeader(304)
-		return
-	}
-
-	// here we return the ressource normally
-	if buf.Code != 0 {
-		buf.WriteCodeTo(w)
-	}
-	buf.WriteAllTo(w)
+	next.ServeHTTP(checked, r)
 }
 
 func (i ifNoneMatch) Wrap(inner http.Handler) http.Handler {
 	return wrap.ServeHandle(i, inner)
 }
 
+/*
+var IfMatchGET = ifMatchGet{}
+
+type ifMatchGet struct{}
+
+// generates the etag and checks it for GET only
+func (i *ifMatchGet) Wrap(next http.Handler) (out http.Handler) {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		m := method.Method(r.Method)
+
+		if m != method.GET {
+			next.ServeHTTP(w, r)
+		}
+
+		ifmatch := r.Header.Get("If-Match")
+
+		// proceed as normal
+		ifmatch = strings.Trim(ifmatch, `"`)
+
+		if ifmatch == "" || ifmatch == "*" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		r.Header.Del("If-Match")
+
+		et := &etaggedWriter{h: md5.New(), CheckedResponseWriter: helper.NewCheckedResponseWriter(w, nil)}
+		et.buf = bytes.NewBuffer(nil)
+
+		next.ServeHTTP(et, r)
+		etag := et.h.Sum(nil)
+
+		if etag != ifmatch {
+			w.Header().Set("ETag", etag)
+			w.WriteHeader(http.StatusPreconditionFailed)
+			return
+		}
+
+		et.WriteHeadersTo(w)
+		et.WriteCodeTo(w)
+		et.buf.WriteTo(w)
+	})
+}
+*/
+
 type ifMatch struct {
 	http.Handler
 }
 
-//var ifMatchMethods = method.GET | method.PUT | method.DELETE | method.PATCH
-
-/*
-func isIfMatchMethod(m method.Method) bool {
-	switch m {
-	case method.GET, method.PUT, method.DELETE, method.PATCH:
-		return true
-	default:
-		return false
-	}
-}
-*/
-
-// Wo macht If-Match sinn?
-// Get, Put, Patch, Delete, alle mit ressource
-
 // see http://stackoverflow.com/questions/2157124/http-if-none-match-vs-if-match
-func (i *ifMatch) Wrap(in http.Handler) (out http.Handler) {
+func (i *ifMatch) Wrap(next http.Handler) (out http.Handler) {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ifmatch := r.Header.Get("If-Match")
 
 		// proceed as normal
 		ifmatch = strings.Trim(ifmatch, `"`)
-		// fmt.Printf("ifmatch: %#v\n", ifmatch)
 
 		if ifmatch == "" || ifmatch == "*" {
-			in.ServeHTTP(w, r)
+			next.ServeHTTP(w, r)
 			return
 		}
 
 		r.Header.Del("If-Match")
 
-		// m, _ := method.StringToMethod[r.Method]
 		m := method.Method(r.Method)
 		// return 412 for method other than GET and PUT and DELETE and PATCH
 		if !m.MayHaveIfMatch() {
-			// fmt.Println("precondition failed, method", m.String())
-			w.WriteHeader(412) // precondition failed
+			w.WriteHeader(http.StatusPreconditionFailed)
 			return
 		}
 
-		// fmt.Println("make head request")
-		buf := helper.NewResponseBuffer(w)
-		//	r.Method = "HEAD"
-		r2, _ := http.NewRequest("HEAD", r.URL.Path, nil)
-		i.ServeHTTP(buf, r2)
+		checkedHead := helper.NewCheckedResponseWriter(w, nil)
+		/*
+			checkedHead := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
+				return false
+			})
+		*/
 
-		// fmt.Println("code", buf.Code)
+		headReq, _ := http.NewRequest("HEAD", r.URL.Path, nil)
+		i.ServeHTTP(checkedHead, headReq)
+
 		var etag string
-		if buf.IsOk() {
-			etag = buf.Header().Get("ETag")
-			// fmt.Printf("etag %#v ifmatch %#v", etag, ifmatch)
+		if checkedHead.IsOk() {
+			etag = checkedHead.Header().Get("ETag")
 		}
-
-		// fmt.Printf("returned to ifmatch: %#v\n", ifmatch)
-		// fmt.Printf("fake headers: %#v\n", fake.Header())
-		// fmt.Printf("real headers: %#v\n", w.Header())
 
 		if etag == "" || etag != ifmatch {
 			if etag != "" && m.MayHaveEtag() {
 				w.Header().Set("ETag", etag)
 			}
-			// fmt.Println("precondition failed, etag does not match")
-			w.WriteHeader(412) // precondition failed
+			w.WriteHeader(http.StatusPreconditionFailed)
 			return
 		}
 
-		in.ServeHTTP(w, r)
+		next.ServeHTTP(w, r)
 	})
 }
 

@@ -22,21 +22,15 @@ type _gzip struct{}
 
 var GZip = _gzip{}
 
-func (g _gzip) Wrap(inner http.Handler) http.Handler {
+func (g _gzip) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-			inner.ServeHTTP(w, r)
+			next.ServeHTTP(w, r)
 			return
 		}
 		w.Header().Set("Content-Encoding", "gzip")
 		gz := gzip.NewWriter(w)
-		/*
-			if err != nil {
-				http.Error(w, err.String(), http.StatusInternalServerError)
-				return
-			}
-		*/
 		defer gz.Close()
-		inner.ServeHTTP(gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
+		next.ServeHTTP(gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
 	})
 }

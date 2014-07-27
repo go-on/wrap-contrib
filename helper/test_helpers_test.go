@@ -67,3 +67,14 @@ func TestAssertHeaderError(t *testing.T) {
 		t.Error("should return error for wrong Content-Type")
 	}
 }
+
+func TestNotFound(t *testing.T) {
+	rec, req := NewTestRequest("GET", "/")
+	NotFound(rec, req)
+
+	err := AssertResponse(rec, "not found", 404)
+
+	if err != nil {
+		t.Error("should return not found (404)")
+	}
+}

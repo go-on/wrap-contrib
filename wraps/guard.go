@@ -8,25 +8,28 @@ import (
 )
 
 // GuardFunc is a wrap.Wapper and http.HandlerFunc that may operate on the ResponseWriter
-// If it does so, the wrapper prevents the inner Handler from serving.
+// If it does so, the wrapper prevents the next Handler from serving.
 type GuardFunc func(http.ResponseWriter, *http.Request)
 
 // ServeHandle lets the GuardFunc serve to a ResponseBuffer and if it changed something
-// the Response is send to the ResponseWriter, preventing the inner http.Handler from
-// executing. Otherwise the inner handler serves the request.
-func (g GuardFunc) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer(wr)
-	g(buf, req)
-	if buf.HasChanged() {
-		buf.WriteAllTo(wr)
+// the Response is send to the ResponseWriter, preventing the next http.Handler from
+// executing. Otherwise the next handler serves the request.
+func (g GuardFunc) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
+	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+		ck.WriteHeadersTo(wr)
+		ck.WriteCodeTo(wr)
+		return true
+	})
+	g(checked, req)
+	if checked.HasChanged() {
 		return
 	}
-	inner.ServeHTTP(wr, req)
+	next.ServeHTTP(wr, req)
 }
 
-// Wrap wraps the given inner handler with the returned handler
-func (g GuardFunc) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(g, inner)
+// Wrap wraps the given next handler with the returned handler
+func (g GuardFunc) Wrap(next http.Handler) http.Handler {
+	return wrap.ServeHandle(g, next)
 }
 
 // Guard returns a GuardFunc for a http.Handler

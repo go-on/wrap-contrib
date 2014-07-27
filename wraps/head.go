@@ -31,24 +31,20 @@ func (h head) Wrap(inner http.Handler) http.Handler {
 // for the inner handler and then remove the body from the response.
 // Non HEAD reqeusts are not affected
 func (h head) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer(wr)
 	if req.Method == "HEAD" {
 		req.Method = "GET"
+
+		checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+			ck.WriteHeadersTo(wr)
+			ck.WriteCodeTo(wr)
+			return false // write no body
+		})
 
 		defer func() {
 			req.Method = "HEAD"
 		}()
 
-		inner.ServeHTTP(buf, req)
-		if buf.HasChanged() {
-			buf.WriteHeadersTo(wr)
-			if buf.Code != 0 {
-				wr.WriteHeader(buf.Code)
-				return
-			}
-			wr.WriteHeader(200)
-			return
-		}
+		inner.ServeHTTP(checked, req)
 		return
 	}
 	inner.ServeHTTP(wr, req)

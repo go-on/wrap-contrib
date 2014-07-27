@@ -3,6 +3,8 @@ package helper
 import (
 	"net/http"
 	"unicode/utf8"
+
+	"github.com/go-on/wrap"
 )
 
 var (
@@ -27,6 +29,14 @@ var (
 // its Write method so that it escape html special chars while writing
 type EscapeHTMLResponseWriter struct {
 	http.ResponseWriter
+}
+
+func (f *EscapeHTMLResponseWriter) Context(ctxPtr interface{}) {
+	f.ResponseWriter.(wrap.ResponseWriterWithContext).Context(ctxPtr)
+}
+
+func (f *EscapeHTMLResponseWriter) SetContext(ctxPtr interface{}) {
+	f.ResponseWriter.(wrap.ResponseWriterWithContext).SetContext(ctxPtr)
 }
 
 // Write writes to the inner *http.ResponseWriter escaping html special chars on the fly

@@ -1,14 +1,14 @@
 {
   "github.com/go-on/method": {
     "VCM": "git",
-    "Rev": "820d1f16559d7eaffc9a05c819fefe831656ddf6",
+    "Rev": "eccc42d1a2bdcd7ae2e83762217531b05c33a3a0",
     "Parent": "github.com/go-on/wrap-contrib/wraps",
     "Tag": "",
     "RepoRoot": "github.com/go-on/method"
   },
   "github.com/go-on/wrap-contrib/helper": {
     "VCM": "git",
-    "Rev": "23107397b265c42c2e7f49d1c2231fc1867e2c2e",
+    "Rev": "8632d80b292332c5f8d210f7b4599d571f1a8f5b",
     "Parent": "github.com/go-on/wrap-contrib/wraps",
     "Tag": "",
     "RepoRoot": "github.com/go-on/wrap-contrib"

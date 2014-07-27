@@ -12,20 +12,25 @@ type fallback struct {
 	ignoreCodes map[int]struct{}
 }
 
-func (f *fallback) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	buf := helper.NewResponseBuffer(wr)
-	for _, h := range f.handlers {
-		h.ServeHTTP(buf, req)
-		if buf.HasChanged() {
-			if _, has := f.ignoreCodes[buf.Code]; !has {
-				buf.WriteAllTo(wr)
-				return
-			}
-			// remove any headers or status codes
-			buf.Reset()
+func (f *fallback) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
+	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+		if _, has := f.ignoreCodes[ck.Code]; !has {
+			ck.WriteHeadersTo(wr)
+			ck.WriteCodeTo(wr)
+			return true
 		}
+		ck.Reset()
+		return false
+	})
+
+	for _, h := range f.handlers {
+		h.ServeHTTP(checked, req)
+		if checked.HasChanged() {
+			return
+		}
+		checked.Reset()
 	}
-	inner.ServeHTTP(wr, req)
+	next.ServeHTTP(wr, req)
 }
 
 // Wrap wraps the given inner handler with the returned handler
