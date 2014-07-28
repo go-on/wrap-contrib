@@ -1,6 +1,5 @@
 package helper
 
-/*
 import (
 	"bytes"
 	"net/http"
@@ -99,4 +98,3 @@ func NewResponseBuffer(w http.ResponseWriter) (f *ResponseBuffer) {
 	f.header = make(http.Header)
 	return
 }
-*/
