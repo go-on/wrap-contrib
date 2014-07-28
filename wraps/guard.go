@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib/helper"
 )
 
 // GuardFunc is a wrap.Wapper and http.HandlerFunc that may operate on the ResponseWriter
@@ -15,13 +14,14 @@ type GuardFunc func(http.ResponseWriter, *http.Request)
 // the Response is send to the ResponseWriter, preventing the next http.Handler from
 // executing. Otherwise the next handler serves the request.
 func (g GuardFunc) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
-	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
-		ck.WriteHeadersTo(wr)
-		ck.WriteCodeTo(wr)
+	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+		ck.FlushHeaders()
+		ck.FlushCode()
 		return true
 	})
 	g(checked, req)
 	if checked.HasChanged() {
+		checked.FlushMissing()
 		return
 	}
 	next.ServeHTTP(wr, req)

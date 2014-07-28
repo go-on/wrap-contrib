@@ -24,6 +24,31 @@ func TestFallbackFirstWins(t *testing.T) {
 	}
 }
 
+func setHeader(w http.ResponseWriter, rq *http.Request) {
+	// fmt.Printf("setting header for %s in %T\n", rq.URL.Path, w)
+	w.Header().Set("x", "y")
+	// if pk, ok := w.(*wrap.RWPeek); ok {
+	// fmt.Printf("has changed %v\n", pk.HasChanged())
+	// }
+}
+
+func TestFallbackFirstWinsSetHeaders(t *testing.T) {
+	h := wrap.New(
+		Fallback(
+			[]int{404},
+			http.HandlerFunc(setHeader),
+			// Write("a"),
+			Write("b"),
+		),
+	)
+	rw, req := NewTestRequest("GET", "/")
+	h.ServeHTTP(rw, req)
+	// fmt.Printf("headers %#v\n", rw.Header())
+	if rw.Header().Get("x") != "y" {
+		t.Errorf("header x should be y, but is %#v", rw.Header().Get("x"))
+	}
+}
+
 func TestFallbackSecondWins(t *testing.T) {
 	h := wrap.New(
 		Fallback(

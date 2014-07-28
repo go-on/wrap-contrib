@@ -4,21 +4,21 @@ import (
 	"net/http"
 
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib/helper"
 )
 
 type first []http.Handler
 
 func (f first) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
-		ck.WriteHeadersTo(wr)
-		ck.WriteCodeTo(wr)
+	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+		ck.FlushHeaders()
+		ck.FlushCode()
 		return true
 	})
 
 	for _, h := range f {
 		h.ServeHTTP(checked, req)
 		if checked.HasChanged() {
+			checked.FlushMissing()
 			return
 		}
 	}

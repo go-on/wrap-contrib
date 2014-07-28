@@ -2,17 +2,6 @@ package helper
 
 import "testing"
 
-func TestEscapeHTMLResponseWriter(t *testing.T) {
-	rec, _ := NewTestRequest("GET", "/")
-	esc := &EscapeHTMLResponseWriter{rec}
-	esc.Write([]byte(`abc<d>"e'f&g`))
-
-	err := AssertResponse(rec, `abc&lt;d&gt;&#34;e&#39;f&amp;g`, 200)
-	if err != nil {
-		t.Error(err)
-	}
-}
-
 func TestAssertResponseNoError(t *testing.T) {
 	rec, _ := NewTestRequest("GET", "/")
 	rec.WriteHeader(201)

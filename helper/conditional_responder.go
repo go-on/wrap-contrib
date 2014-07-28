@@ -1,5 +1,6 @@
 package helper
 
+/*
 import (
 	"io"
 	"net/http"
@@ -119,3 +120,4 @@ func (f *CheckedResponseWriter) WriteHeadersTo(w http.ResponseWriter) {
 	}
 	f.headersWritten = true
 }
+*/

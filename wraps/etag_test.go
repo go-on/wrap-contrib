@@ -21,6 +21,7 @@ type ctx2 struct {
 }
 
 func (c *ctx2) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	TextContentType.SetContentType(w)
 	w.Write([]byte("~" + r.URL.Path + "~"))
 }
 

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib/helper"
 )
 
 type head struct{}
@@ -34,9 +33,9 @@ func (h head) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.
 	if req.Method == "HEAD" {
 		req.Method = "GET"
 
-		checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
-			ck.WriteHeadersTo(wr)
-			ck.WriteCodeTo(wr)
+		checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+			ck.FlushHeaders()
+			ck.FlushCode()
 			return false // write no body
 		})
 
@@ -45,6 +44,8 @@ func (h head) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.
 		}()
 
 		inner.ServeHTTP(checked, req)
+
+		checked.FlushMissing()
 		return
 	}
 	inner.ServeHTTP(wr, req)

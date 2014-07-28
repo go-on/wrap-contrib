@@ -62,3 +62,20 @@ func TestCatchNoPanic(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCatchNoPanicHeader(t *testing.T) {
+	p := panicker{}
+	h := wrap.New(
+		Catch(p),
+		wrap.HandlerFunc(setHeader),
+		// wrap.Handler(Write("hi!")),
+	)
+
+	rw, req := NewTestRequest("GET", "/catch-no-panic-header")
+	h.ServeHTTP(rw, req)
+
+	if x := rw.Header().Get("x"); x != "y" {
+		t.Errorf("header x should be y, but is %#v", x)
+	}
+
+}

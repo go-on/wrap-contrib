@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib/helper"
 )
 
 // Catcher provides a Catch method that is called if a http.Handler recovered
@@ -37,21 +36,16 @@ func (c CatchFunc) ServeHandle(next http.Handler, wr http.ResponseWriter, req *h
 		}
 	}()
 
-	var bodyWritten = false
-
-	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
-		ck.WriteHeadersTo(wr)
-		ck.WriteCodeTo(wr)
-		bodyWritten = true
+	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+		ck.FlushHeaders()
+		ck.FlushCode()
 		return true
 	})
 
-	if !bodyWritten && checked.HasChanged() {
-		checked.WriteHeadersTo(wr)
-		checked.WriteCodeTo(wr)
-	}
-
 	next.ServeHTTP(checked, req)
+
+	checked.FlushMissing()
+
 }
 
 // Wrap wraps the given next handler with the returned handler

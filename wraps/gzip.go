@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/go-on/wrap"
 )
 
 type gzipResponseWriter struct {
@@ -14,8 +16,16 @@ type gzipResponseWriter struct {
 	http.ResponseWriter
 }
 
-func (w gzipResponseWriter) Write(b []byte) (int, error) {
+func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
+}
+
+func (w *gzipResponseWriter) Context(ctxPtr interface{}) {
+	w.ResponseWriter.(wrap.RWContext).Context(ctxPtr)
+}
+
+func (w *gzipResponseWriter) SetContext(ctxPtr interface{}) {
+	w.ResponseWriter.(wrap.RWContext).SetContext(ctxPtr)
 }
 
 type _gzip struct{}
@@ -31,6 +41,6 @@ func (g _gzip) Wrap(next http.Handler) http.Handler {
 		w.Header().Set("Content-Encoding", "gzip")
 		gz := gzip.NewWriter(w)
 		defer gz.Close()
-		next.ServeHTTP(gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
+		next.ServeHTTP(&gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
 	})
 }

@@ -1,9 +1,9 @@
 package wraps
 
 import (
+	"github.com/go-on/method"
 	"net/http"
 	"testing"
-	"github.com/go-on/method"
 
 	"github.com/go-on/wrap"
 	"github.com/go-on/wrap-contrib/helper"

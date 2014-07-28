@@ -7,7 +7,7 @@ import (
 	. "github.com/go-on/wrap-contrib/helper"
 )
 
-func TestEscapeHTML(t *testing.T) {
+func TestEscapeHTML1(t *testing.T) {
 	h := wrap.New(
 		EscapeHTML,
 		wrap.Handler(Write(`abc<d>"e'f&g`)),
@@ -19,5 +19,22 @@ func TestEscapeHTML(t *testing.T) {
 
 	if err != nil {
 		t.Error(err.Error())
+	}
+}
+
+func TestEscapeHTML2(t *testing.T) {
+	h := wrap.New(
+		EscapeHTML,
+		HTMLContentType,
+	)
+
+	rw, req := NewTestRequest("GET", "/")
+	h.ServeHTTP(rw, req)
+
+	expected := "text/html; charset=utf-8"
+	got := rw.Header().Get("Content-Type")
+
+	if got != expected {
+		t.Errorf("expected: %#v, got: %#v", expected, got)
 	}
 }

@@ -3,8 +3,6 @@ package wraps
 import (
 	"net/http"
 
-	"github.com/go-on/wrap-contrib/helper"
-
 	"github.com/go-on/wrap"
 )
 
@@ -21,16 +19,24 @@ func (c ContentType) SetContentType(w http.ResponseWriter) {
 // writes the content type, if the next handler was successful
 // and did not set a content-type
 func (c ContentType) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
-	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+
+	var bodyWritten = false
+	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
 		if ck.IsOk() {
 			c.SetContentType(ck)
 		}
-		ck.WriteHeadersTo(wr)
-		ck.WriteCodeTo(wr)
+		ck.FlushHeaders()
+		ck.FlushCode()
+		bodyWritten = true
 		return true
 	})
 
 	next.ServeHTTP(checked, req)
+
+	if !bodyWritten {
+		c.SetContentType(checked)
+	}
+	checked.FlushMissing()
 }
 
 // Wrap wraps the given next handler with the returned handler

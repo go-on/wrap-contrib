@@ -1,5 +1,6 @@
 package helper
 
+/*
 import (
 	"net/http"
 	"unicode/utf8"
@@ -75,3 +76,4 @@ func (rw *EscapeHTMLResponseWriter) Write(b []byte) (num int, err error) {
 	rw.ResponseWriter.Write(b[last:])
 	return
 }
+*/

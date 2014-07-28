@@ -16,7 +16,7 @@ func serveRemoveResponseTest(h http.Handler) (ctype string) {
 	return
 }
 
-func TestRemoveResponseHeaderNoMatch(t *testing.T) {
+func TestRemoveResponseHeaderNoMatch1(t *testing.T) {
 	h := wrap.New(
 		RemoveResponseHeader("X-"),
 		wrap.Handler(Write("hi")),
@@ -29,10 +29,35 @@ func TestRemoveResponseHeaderNoMatch(t *testing.T) {
 
 }
 
-func TestRemoveResponseHeaderExactMatch(t *testing.T) {
+func TestRemoveResponseHeaderNoMatch2(t *testing.T) {
+	h := wrap.New(
+		RemoveResponseHeader("X-"),
+		TextContentType,
+	)
+
+	ctype := serveRemoveResponseTest(h)
+	if ctype != "text/plain; charset=utf-8" {
+		t.Errorf("wrong content type, should be text/plain; charset=utf-8, is: %s", ctype)
+	}
+
+}
+
+func TestRemoveResponseHeaderExactMatch1(t *testing.T) {
 	h := wrap.New(
 		RemoveResponseHeader("Content-Type"),
 		wrap.Handler(Write("hi")),
+	)
+	ctype := serveRemoveResponseTest(h)
+	if ctype != "" {
+		t.Errorf("wrong content type, should be empty, is: %s", ctype)
+	}
+}
+
+func TestRemoveResponseHeaderExactMatch2(t *testing.T) {
+	h := wrap.New(
+		RemoveResponseHeader("Content-Type"),
+		// wrap.Handler(Write("hi")),
+		HTMLContentType,
 	)
 	ctype := serveRemoveResponseTest(h)
 	if ctype != "" {

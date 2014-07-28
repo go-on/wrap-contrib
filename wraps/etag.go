@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-on/method"
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib/helper"
 )
 
 // var etagMethods = method.GET | method.HEAD
@@ -21,7 +20,7 @@ type etag struct{}
 var ETag = etag{}
 
 type etaggedWriter struct {
-	*helper.CheckedResponseWriter
+	*wrap.RWPeek
 	h       hash.Hash
 	buf     *bytes.Buffer
 	gotData bool
@@ -51,7 +50,7 @@ func (e etag) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Requ
 		next.ServeHTTP(w, r)
 		return
 	}
-	et := &etaggedWriter{h: md5.New(), CheckedResponseWriter: helper.NewCheckedResponseWriter(w, nil)}
+	et := &etaggedWriter{h: md5.New(), RWPeek: wrap.NewRWPeek(w, nil)}
 
 	// cache for non HEAD methods
 	if m != method.HEAD {
@@ -62,8 +61,9 @@ func (e etag) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Requ
 	if et.IsOk() && et.gotData {
 		et.Header().Set("ETag", fmt.Sprintf("%x", et.h.Sum(nil)))
 	}
-	et.WriteHeadersTo(w)
-	et.WriteCodeTo(w)
+	et.FlushMissing()
+	// et.FlushHeaders()
+	// et.FlushCode()
 	if et.buf != nil {
 		et.buf.WriteTo(w)
 	}
@@ -96,11 +96,11 @@ func (i ifNoneMatch) ServeHandle(next http.Handler, w http.ResponseWriter, r *ht
 		return
 	}
 
-	checked := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
-		ck.WriteHeadersTo(w)
+	checked := wrap.NewRWPeek(w, func(ck *wrap.RWPeek) bool {
+		ck.FlushHeaders()
 		// non 2xx returns should ignore If-None-Match
 		if !ck.IsOk() {
-			ck.WriteCodeTo(w)
+			ck.FlushCode()
 			return true
 		}
 
@@ -112,11 +112,13 @@ func (i ifNoneMatch) ServeHandle(next http.Handler, w http.ResponseWriter, r *ht
 			w.Write([]byte("\n"))
 			return false
 		}
-		ck.WriteCodeTo(w)
+		ck.FlushCode()
 		return true
 	})
 
 	next.ServeHTTP(checked, r)
+
+	checked.FlushMissing()
 }
 
 func (i ifNoneMatch) Wrap(inner http.Handler) http.Handler {
@@ -196,7 +198,7 @@ func (i *ifMatch) Wrap(next http.Handler) (out http.Handler) {
 			return
 		}
 
-		checkedHead := helper.NewCheckedResponseWriter(w, nil)
+		checkedHead := wrap.NewRWPeek(w, nil)
 		/*
 			checkedHead := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
 				return false

@@ -3,7 +3,6 @@ package wraps
 import (
 	"github.com/go-on/method"
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib/helper"
 
 	"net/http"
 )
@@ -19,12 +18,14 @@ func (f *filterBody) Wrap(next http.Handler) (out http.Handler) {
 			return
 		}
 
-		checked := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
-			ck.WriteHeadersTo(w)
-			ck.WriteCodeTo(w)
+		checked := wrap.NewRWPeek(w, func(ck *wrap.RWPeek) bool {
+			ck.FlushHeaders()
+			ck.FlushCode()
 			return false
 		})
 		next.ServeHTTP(checked, r)
+
+		checked.FlushMissing()
 	})
 }
 

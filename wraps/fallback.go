@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/go-on/wrap"
-	"github.com/go-on/wrap-contrib/helper"
 )
 
 type fallback struct {
@@ -13,12 +12,11 @@ type fallback struct {
 }
 
 func (f *fallback) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
-	bodywritten := false
-	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
+
+	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
 		if _, has := f.ignoreCodes[ck.Code]; !has {
-			ck.WriteHeadersTo(wr)
-			ck.WriteCodeTo(wr)
-			bodywritten = true
+			ck.FlushHeaders()
+			ck.FlushCode()
 			return true
 		}
 		ck.Reset()
@@ -29,10 +27,7 @@ func (f *fallback) ServeHandle(next http.Handler, wr http.ResponseWriter, req *h
 		h.ServeHTTP(checked, req)
 		if checked.HasChanged() {
 			if _, has := f.ignoreCodes[checked.Code]; !has {
-				if !bodywritten {
-					checked.WriteHeadersTo(wr)
-					checked.WriteCodeTo(wr)
-				}
+				checked.FlushMissing()
 				return
 			}
 		}
