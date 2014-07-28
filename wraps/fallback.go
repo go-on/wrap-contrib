@@ -13,10 +13,12 @@ type fallback struct {
 }
 
 func (f *fallback) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
+	bodywritten := false
 	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
 		if _, has := f.ignoreCodes[ck.Code]; !has {
 			ck.WriteHeadersTo(wr)
 			ck.WriteCodeTo(wr)
+			bodywritten = true
 			return true
 		}
 		ck.Reset()
@@ -26,7 +28,13 @@ func (f *fallback) ServeHandle(next http.Handler, wr http.ResponseWriter, req *h
 	for _, h := range f.handlers {
 		h.ServeHTTP(checked, req)
 		if checked.HasChanged() {
-			return
+			if _, has := f.ignoreCodes[checked.Code]; !has {
+				if !bodywritten {
+					checked.WriteHeadersTo(wr)
+					checked.WriteCodeTo(wr)
+				}
+				return
+			}
 		}
 		checked.Reset()
 	}

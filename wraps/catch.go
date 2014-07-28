@@ -37,11 +37,19 @@ func (c CatchFunc) ServeHandle(next http.Handler, wr http.ResponseWriter, req *h
 		}
 	}()
 
+	var bodyWritten = false
+
 	checked := helper.NewCheckedResponseWriter(wr, func(ck *helper.CheckedResponseWriter) bool {
 		ck.WriteHeadersTo(wr)
 		ck.WriteCodeTo(wr)
+		bodyWritten = true
 		return true
 	})
+
+	if !bodyWritten && checked.HasChanged() {
+		checked.WriteHeadersTo(wr)
+		checked.WriteCodeTo(wr)
+	}
 
 	next.ServeHTTP(checked, req)
 }
