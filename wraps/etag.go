@@ -22,8 +22,9 @@ var ETag = etag{}
 
 type etaggedWriter struct {
 	*helper.CheckedResponseWriter
-	h   hash.Hash
-	buf *bytes.Buffer
+	h       hash.Hash
+	buf     *bytes.Buffer
+	gotData bool
 }
 
 func (et *etaggedWriter) Write(b []byte) (num int, err error) {
@@ -31,8 +32,15 @@ func (et *etaggedWriter) Write(b []byte) (num int, err error) {
 		num, err = et.buf.Write(b)
 	}
 	if et.IsOk() {
+		if !et.gotData {
+			ctype := et.Header().Get("Content-Type")
+			if ctype != "" {
+				et.h.Write([]byte(ctype))
+			}
+		}
 		et.h.Write(b)
 	}
+	et.gotData = true
 	return 0, io.EOF
 }
 
@@ -51,7 +59,7 @@ func (e etag) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Requ
 	}
 
 	next.ServeHTTP(et, r)
-	if et.IsOk() {
+	if et.IsOk() && et.gotData {
 		et.Header().Set("ETag", fmt.Sprintf("%x", et.h.Sum(nil)))
 	}
 	et.WriteHeadersTo(w)
@@ -101,6 +109,7 @@ func (i ifNoneMatch) ServeHandle(next http.Handler, w http.ResponseWriter, r *ht
 		etag := w.Header().Get("ETag")
 		if (ifnone == "*" && etag != "") || ifnone == etag {
 			w.WriteHeader(http.StatusNotModified)
+			w.Write([]byte("\n"))
 			return false
 		}
 		ck.WriteCodeTo(w)
