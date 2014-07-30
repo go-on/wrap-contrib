@@ -38,3 +38,14 @@ func TestEscapeHTML2(t *testing.T) {
 		t.Errorf("expected: %#v, got: %#v", expected, got)
 	}
 }
+
+func TestEscapeHTML3(t *testing.T) {
+	rw, req := NewTestRequest("GET", "/")
+	EscapeHTML.WrapFunc(Write(`abc<d>"e'f&g`).ServeHTTP).ServeHTTP(rw, req)
+
+	err := AssertResponse(rw, `abc&lt;d&gt;&#34;e&#39;f&amp;g`, 200)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+}

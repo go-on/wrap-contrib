@@ -16,6 +16,12 @@ func (a escapeHTML) Wrap(next http.Handler) http.Handler {
 	})
 }
 
+func (a escapeHTML) WrapFunc(next http.HandlerFunc) http.Handler {
+	return http.HandlerFunc(func(wr http.ResponseWriter, req *http.Request) {
+		next.ServeHTTP(&wrap.RWEscapeHTML{wr}, req)
+	})
+}
+
 // EscapeHTML wraps the next handler by replacing the response writer with an EscapeHTMLResponseWriter
 // that escapes html special chars while writing to the underlying response writer
 var EscapeHTML = escapeHTML{}
