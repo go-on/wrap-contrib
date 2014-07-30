@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"fmt"
 	"hash"
-	"io"
 	"net/http"
 	"strings"
 
@@ -40,7 +39,7 @@ func (et *etaggedWriter) Write(b []byte) (num int, err error) {
 		et.h.Write(b)
 	}
 	et.gotData = true
-	return 0, io.EOF
+	return 0, nil
 }
 
 func (e etag) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Request) {
