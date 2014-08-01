@@ -23,17 +23,17 @@ func Head() wrap.Wrapper {
 
 // Wrap wraps the given inner handler with the returned handler
 func (h head) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(h, inner)
+	return wrap.NextHandler(h).Wrap(inner)
 }
 
 // ServeHandle handles serves the request by transforming a HEAD request to a GET request
 // for the inner handler and then remove the body from the response.
 // Non HEAD reqeusts are not affected
-func (h head) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (h head) ServeHTTPNext(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
 	if req.Method == "HEAD" {
 		req.Method = "GET"
 
-		checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+		checked := wrap.NewPeek(wr, func(ck *wrap.Peek) bool {
 			ck.FlushHeaders()
 			ck.FlushCode()
 			return false // write no body

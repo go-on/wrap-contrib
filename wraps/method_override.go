@@ -52,15 +52,15 @@ func (ø methodOverride) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ø.serveHTTP(w, r)
 }
 
-func (ø methodOverride) ServeHandle(in http.Handler, w http.ResponseWriter, r *http.Request) {
+func (ø methodOverride) ServeHTTPNext(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	if ø.serveHTTP(w, r) {
 		return
 	}
-	in.ServeHTTP(w, r)
+	next.ServeHTTP(w, r)
 }
 
-func (ø methodOverride) Wrap(in http.Handler) (out http.Handler) {
-	return wrap.ServeHandle(ø, in)
+func (ø methodOverride) Wrap(next http.Handler) (out http.Handler) {
+	return wrap.NextHandler(ø).Wrap(next)
 }
 
 func MethodOverride() methodOverride {

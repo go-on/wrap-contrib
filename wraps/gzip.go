@@ -21,11 +21,11 @@ func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 }
 
 func (w *gzipResponseWriter) Context(ctxPtr interface{}) {
-	w.ResponseWriter.(wrap.RWContext).Context(ctxPtr)
+	w.ResponseWriter.(wrap.Context).Context(ctxPtr)
 }
 
 func (w *gzipResponseWriter) SetContext(ctxPtr interface{}) {
-	w.ResponseWriter.(wrap.RWContext).SetContext(ctxPtr)
+	w.ResponseWriter.(wrap.Context).SetContext(ctxPtr)
 }
 
 type _gzip struct{}

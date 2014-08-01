@@ -36,10 +36,10 @@ func (df DispatchFunc) Dispatch(r *http.Request) http.Handler {
 	return df(r)
 }
 
-func (df DispatchFunc) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (df DispatchFunc) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 	disp := df(req)
 	if disp == nil {
-		inner.ServeHTTP(wr, req)
+		next.ServeHTTP(wr, req)
 		return
 	}
 	disp.ServeHTTP(wr, req)
@@ -53,8 +53,8 @@ func (df DispatchFunc) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	disp.ServeHTTP(wr, req)
 }
 
-func (df DispatchFunc) Wrap(inner http.Handler) (out http.Handler) {
-	return wrap.ServeHandle(df, inner)
+func (df DispatchFunc) Wrap(next http.Handler) (out http.Handler) {
+	return wrap.NextHandler(df).Wrap(next)
 }
 
 func Dispatch(d Dispatcher) DispatchFunc {
@@ -106,17 +106,17 @@ func (mh *MethodHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (mh *MethodHandler) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (mh *MethodHandler) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 	h := mh.handlerForMethod(req.Method)
 	if h == nil {
-		inner.ServeHTTP(wr, req)
+		next.ServeHTTP(wr, req)
 		return
 	}
 	h.ServeHTTP(wr, req)
 }
 
-func (mh *MethodHandler) Wrap(inner http.Handler) (out http.Handler) {
-	return wrap.ServeHandle(mh, inner)
+func (mh *MethodHandler) Wrap(next http.Handler) (out http.Handler) {
+	return wrap.NextHandler(mh).Wrap(next)
 }
 
 func POSTHandler(path string, handler http.Handler) *matchHandler {
@@ -147,12 +147,12 @@ func HEADHandler(path string, handler http.Handler) *matchHandler {
 	return &matchHandler{And(MatchPath(path), MatchMethod("HEAD")), handler}
 }
 
-func (mh *matchHandler) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (mh *matchHandler) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 	if mh.Match(req) {
 		mh.Handler.ServeHTTP(wr, req)
 		return
 	}
-	inner.ServeHTTP(wr, req)
+	next.ServeHTTP(wr, req)
 }
 
 func (mh *matchHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
@@ -161,8 +161,8 @@ func (mh *matchHandler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (mh *matchHandler) Wrap(inner http.Handler) (out http.Handler) {
-	return wrap.ServeHandle(mh, inner)
+func (mh *matchHandler) Wrap(next http.Handler) (out http.Handler) {
+	return wrap.NextHandler(mh).Wrap(next)
 }
 
 type dispatchMap []matchHandler

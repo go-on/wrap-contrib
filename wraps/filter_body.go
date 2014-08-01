@@ -18,7 +18,7 @@ func (f *filterBody) Wrap(next http.Handler) (out http.Handler) {
 			return
 		}
 
-		checked := wrap.NewRWPeek(w, func(ck *wrap.RWPeek) bool {
+		checked := wrap.NewPeek(w, func(ck *wrap.Peek) bool {
 			ck.FlushHeaders()
 			ck.FlushCode()
 			return false

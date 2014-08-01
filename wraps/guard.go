@@ -13,8 +13,8 @@ type GuardFunc func(http.ResponseWriter, *http.Request)
 // ServeHandle lets the GuardFunc serve to a ResponseBuffer and if it changed something
 // the Response is send to the ResponseWriter, preventing the next http.Handler from
 // executing. Otherwise the next handler serves the request.
-func (g GuardFunc) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
-	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+func (g GuardFunc) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
+	checked := wrap.NewPeek(wr, func(ck *wrap.Peek) bool {
 		ck.FlushHeaders()
 		ck.FlushCode()
 		return true
@@ -29,7 +29,7 @@ func (g GuardFunc) ServeHandle(next http.Handler, wr http.ResponseWriter, req *h
 
 // Wrap wraps the given next handler with the returned handler
 func (g GuardFunc) Wrap(next http.Handler) http.Handler {
-	return wrap.ServeHandle(g, next)
+	return wrap.NextHandler(g).Wrap(next)
 }
 
 // Guard returns a GuardFunc for a http.Handler

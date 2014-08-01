@@ -16,12 +16,12 @@ func SetResponseHeader(key, val string) wrap.Wrapper {
 
 // ServeHandle sets the header of the key to the value and calls
 // the inner handler after that
-func (s *setResponseHeader) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (s *setResponseHeader) ServeHTTPNext(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
 	wr.Header().Set(s.Key, s.Val)
 	inner.ServeHTTP(wr, req)
 }
 
 // Wrap wraps the given inner handler with the returned handler
-func (s *setResponseHeader) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(s, inner)
+func (s *setResponseHeader) Wrap(next http.Handler) http.Handler {
+	return wrap.NextHandler(s).Wrap(next)
 }

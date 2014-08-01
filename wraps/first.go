@@ -8,8 +8,8 @@ import (
 
 type first []http.Handler
 
-func (f first) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
-	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+func (f first) ServeHTTPNext(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+	checked := wrap.NewPeek(wr, func(ck *wrap.Peek) bool {
 		ck.FlushHeaders()
 		ck.FlushCode()
 		return true
@@ -26,8 +26,8 @@ func (f first) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http
 }
 
 // Wrap wraps the given inner handler with the returned handler
-func (f first) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(f, inner)
+func (f first) Wrap(next http.Handler) http.Handler {
+	return wrap.NextHandler(f).Wrap(next)
 }
 
 // First will try all given handler until

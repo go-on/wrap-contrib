@@ -13,11 +13,11 @@ type RemoveResponseHeader string
 
 // ServeHandle removes the response headers that are identical to the string
 // or have if as prefix after the next handler is run
-func (rh RemoveResponseHeader) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Request) {
+func (rh RemoveResponseHeader) ServeHTTPNext(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	bodyWritten := false
 	comp := strings.TrimSpace(strings.ToLower(string(rh)))
 
-	checked := wrap.NewRWPeek(w, func(ck *wrap.RWPeek) bool {
+	checked := wrap.NewPeek(w, func(ck *wrap.Peek) bool {
 		hd := ck.Header()
 		for k := range hd {
 			k = strings.TrimSpace(strings.ToLower(k))
@@ -47,5 +47,5 @@ func (rh RemoveResponseHeader) ServeHandle(next http.Handler, w http.ResponseWri
 
 // Wrap wraps the given next handler with the returned handler
 func (rh RemoveResponseHeader) Wrap(in http.Handler) http.Handler {
-	return wrap.ServeHandle(rh, in)
+	return wrap.NextHandler(rh).Wrap(in)
 }

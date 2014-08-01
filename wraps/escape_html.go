@@ -12,13 +12,13 @@ type escapeHTML struct{}
 // calls the inner handlers ServeHTTP method with an EscapeHTMLResponseWriter
 func (a escapeHTML) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(wr http.ResponseWriter, req *http.Request) {
-		next.ServeHTTP(&wrap.RWEscapeHTML{wr}, req)
+		next.ServeHTTP(&wrap.EscapeHTML{wr}, req)
 	})
 }
 
 func (a escapeHTML) WrapFunc(next http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(wr http.ResponseWriter, req *http.Request) {
-		next.ServeHTTP(&wrap.RWEscapeHTML{wr}, req)
+		next.ServeHTTP(&wrap.EscapeHTML{wr}, req)
 	})
 }
 

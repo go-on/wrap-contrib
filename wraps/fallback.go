@@ -11,9 +11,9 @@ type fallback struct {
 	ignoreCodes map[int]struct{}
 }
 
-func (f *fallback) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (f *fallback) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 
-	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+	checked := wrap.NewPeek(wr, func(ck *wrap.Peek) bool {
 		if _, has := f.ignoreCodes[ck.Code]; !has {
 			ck.FlushHeaders()
 			ck.FlushCode()
@@ -36,9 +36,9 @@ func (f *fallback) ServeHandle(next http.Handler, wr http.ResponseWriter, req *h
 	next.ServeHTTP(wr, req)
 }
 
-// Wrap wraps the given inner handler with the returned handler
-func (f *fallback) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(f, inner)
+// Wrap wraps the given next handler with the returned handler
+func (f *fallback) Wrap(next http.Handler) http.Handler {
+	return wrap.NextHandler(f).Wrap(next)
 }
 
 // Fallback will try all given handler until

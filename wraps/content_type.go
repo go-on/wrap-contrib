@@ -18,10 +18,10 @@ func (c ContentType) SetContentType(w http.ResponseWriter) {
 // ServeHandle serves the given request with the next handler and after that
 // writes the content type, if the next handler was successful
 // and did not set a content-type
-func (c ContentType) ServeHandle(next http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (c ContentType) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 
 	var bodyWritten = false
-	checked := wrap.NewRWPeek(wr, func(ck *wrap.RWPeek) bool {
+	checked := wrap.NewPeek(wr, func(ck *wrap.Peek) bool {
 		if ck.IsOk() {
 			c.SetContentType(ck)
 		}
@@ -41,7 +41,7 @@ func (c ContentType) ServeHandle(next http.Handler, wr http.ResponseWriter, req 
 
 // Wrap wraps the given next handler with the returned handler
 func (c ContentType) Wrap(next http.Handler) http.Handler {
-	return wrap.ServeHandle(c, next)
+	return wrap.NextHandler(c).Wrap(next)
 }
 
 var (

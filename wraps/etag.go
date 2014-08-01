@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 
+	// "github.com/go-on/wrap/responsewriter"
+
 	"github.com/go-on/method"
 	"github.com/go-on/wrap"
 )
@@ -19,7 +21,7 @@ type etag struct{}
 var ETag = etag{}
 
 type etaggedWriter struct {
-	*wrap.RWPeek
+	*wrap.Peek
 	h       hash.Hash
 	buf     *bytes.Buffer
 	gotData bool
@@ -42,14 +44,14 @@ func (et *etaggedWriter) Write(b []byte) (num int, err error) {
 	return 0, nil
 }
 
-func (e etag) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Request) {
+func (e etag) ServeHTTPNext(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	m := method.Method(r.Method)
 
 	if !m.MayHaveEtag() {
 		next.ServeHTTP(w, r)
 		return
 	}
-	et := &etaggedWriter{h: md5.New(), RWPeek: wrap.NewRWPeek(w, nil)}
+	et := &etaggedWriter{h: md5.New(), Peek: wrap.NewPeek(w, nil)}
 
 	// cache for non HEAD methods
 	if m != method.HEAD {
@@ -68,8 +70,8 @@ func (e etag) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func (e etag) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(e, inner)
+func (e etag) Wrap(next http.Handler) http.Handler {
+	return wrap.NextHandler(e).Wrap(next)
 }
 
 type ifNoneMatch struct{}
@@ -77,7 +79,7 @@ type ifNoneMatch struct{}
 var IfNoneMatch = ifNoneMatch{}
 
 // see http://www.freesoft.org/CIE/RFC/2068/187.htm
-func (i ifNoneMatch) ServeHandle(next http.Handler, w http.ResponseWriter, r *http.Request) {
+func (i ifNoneMatch) ServeHTTPNext(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	ifnone := r.Header.Get("If-None-Match")
 	ifnone = strings.Trim(ifnone, `"`)
 	// proceed as normal
@@ -95,7 +97,7 @@ func (i ifNoneMatch) ServeHandle(next http.Handler, w http.ResponseWriter, r *ht
 		return
 	}
 
-	checked := wrap.NewRWPeek(w, func(ck *wrap.RWPeek) bool {
+	checked := wrap.NewPeek(w, func(ck *wrap.Peek) bool {
 		ck.FlushHeaders()
 		// non 2xx returns should ignore If-None-Match
 		if !ck.IsOk() {
@@ -120,8 +122,8 @@ func (i ifNoneMatch) ServeHandle(next http.Handler, w http.ResponseWriter, r *ht
 	checked.FlushMissing()
 }
 
-func (i ifNoneMatch) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(i, inner)
+func (i ifNoneMatch) Wrap(next http.Handler) http.Handler {
+	return wrap.NextHandler(i).Wrap(next)
 }
 
 /*
@@ -197,7 +199,7 @@ func (i *ifMatch) Wrap(next http.Handler) (out http.Handler) {
 			return
 		}
 
-		checkedHead := wrap.NewRWPeek(w, nil)
+		checkedHead := wrap.NewPeek(w, nil)
 		/*
 			checkedHead := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
 				return false

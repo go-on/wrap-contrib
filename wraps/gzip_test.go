@@ -35,14 +35,14 @@ func WrapCtx(next http.Handler) http.Handler {
 
 func contextSetter(next http.Handler, rw http.ResponseWriter, req *http.Request) {
 	var hello string
-	rw.(wrap.RWContext).Context(&hello)
-	rw.(wrap.RWContext).SetContext(hello + "world")
+	rw.(wrap.Context).Context(&hello)
+	rw.(wrap.Context).SetContext(hello + "world")
 	next.ServeHTTP(rw, req)
 }
 
 func contextWriter(rw http.ResponseWriter, req *http.Request) {
 	var hello string
-	rw.(wrap.RWContext).Context(&hello)
+	rw.(wrap.Context).Context(&hello)
 	fmt.Fprint(rw, hello)
 }
 
@@ -51,7 +51,7 @@ func TestGzipContext(t *testing.T) {
 		wrap.WrapperFunc(WrapCtx),
 		GZip,
 		HTMLContentType,
-		wrap.ServeHandlerFunc(contextSetter),
+		wrap.NextHandlerFunc(contextSetter),
 		wrap.HandlerFunc(contextWriter),
 	)
 

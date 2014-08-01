@@ -10,15 +10,15 @@ type around struct{ before, after http.Handler }
 
 // ServeHandle serves the given request by calling the before handler followed by the inner
 // handler and followed by the after handler
-func (a around) ServeHandle(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (a around) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 	a.before.ServeHTTP(wr, req)
-	inner.ServeHTTP(wr, req)
+	next.ServeHTTP(wr, req)
 	a.after.ServeHTTP(wr, req)
 }
 
 // Wrap wraps the given inner handler with the returned handler
-func (a around) Wrap(inner http.Handler) http.Handler {
-	return wrap.ServeHandle(a, inner)
+func (a around) Wrap(next http.Handler) http.Handler {
+	return wrap.NextHandler(a).Wrap(next)
 }
 
 // Around returns a wrapper that calls the given before and after handler
