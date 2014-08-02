@@ -50,13 +50,6 @@ func Example() {
 	fmt.Println(rec.Body.String())
 
 	rec = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/", nil)
-	stack.ServeHTTP(rec, req)
-	token = rec.Body.String()
-	// cookie = parseCookie(rec)
-
-	rec = httptest.NewRecorder()
-	// req = mkPostReq(cookie, token+"x")
 	req, _ = http.NewRequest("POST", "/", nil)
 	stack.ServeHTTP(rec, req)
 	fmt.Println("-- fail --")
