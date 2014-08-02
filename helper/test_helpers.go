@@ -49,18 +49,8 @@ func AssertHeader(rec *httptest.ResponseRecorder, key, val string) error {
 	return nil
 }
 
+// WriteError writes a simple 500 internal server error
 func WriteError(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(`500 server error`))
 }
-
-/*
-// NotFound writes a status code of 404 and the body "not found" to the ResponseWriter
-func NotFound(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(404)
-	w.Write([]byte(`not found`))
-}
-
-// DoNothing is a http.Handler that does nothing
-func DoNothing(rw http.ResponseWriter, req *http.Request) {}
-*/

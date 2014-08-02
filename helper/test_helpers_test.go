@@ -56,3 +56,14 @@ func TestAssertHeaderError(t *testing.T) {
 		t.Error("should return error for wrong Content-Type")
 	}
 }
+
+func TestWriteError(t *testing.T) {
+	rec, req := NewTestRequest("GET", "/")
+	WriteError(rec, req)
+
+	err := AssertResponse(rec, "500 server error", 500)
+
+	if err != nil {
+		t.Error("should return server error (500)")
+	}
+}

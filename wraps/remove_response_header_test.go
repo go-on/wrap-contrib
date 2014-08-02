@@ -45,7 +45,7 @@ func TestRemoveResponseHeaderNoMatch2(t *testing.T) {
 func TestRemoveResponseHeaderExactMatch1(t *testing.T) {
 	h := wrap.New(
 		RemoveResponseHeader("Content-Type"),
-		wrap.Handler(String("hi")),
+		wrap.Handler(TextString("hi")),
 	)
 	ctype := serveRemoveResponseTest(h)
 	if ctype != "" {
