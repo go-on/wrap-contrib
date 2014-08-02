@@ -1,7 +1,7 @@
-// Package nosurf provides integration of the github.com/justinas/nosurf package with the wrapper
+// Package wrapnosurf provides integration of the github.com/justinas/nosurf package with the wrapper
 // framework.
 
-package nosurf
+package wrapnosurf
 
 import (
 	"net/http"

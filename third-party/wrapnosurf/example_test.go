@@ -1,4 +1,4 @@
-package nosurf
+package wrapnosurf_test
 
 import (
 	"fmt"
@@ -8,55 +8,8 @@ import (
 	"strings"
 
 	"github.com/go-on/wrap"
+	"github.com/go-on/wrap-contrib/third-party/wrapnosurf"
 )
-
-type context struct {
-	http.ResponseWriter
-	token Token
-}
-
-// context is an implementation for the Contexter interface.
-//
-// It receives a pointer to a value that is already stored inside the context.
-// Values are distiguished by their type.
-// Context sets the value of the given pointer to the value of the same type
-// that is stored inside of the context.
-// A pointer type that is not supported results in a panic.
-func (c *context) Context(ctxPtr interface{}) {
-	switch ty := ctxPtr.(type) {
-	case *Token:
-		*ty = c.token
-	default:
-		panic(fmt.Sprintf("unsupported context: %T", ctxPtr))
-	}
-}
-
-// SetContext is an implementation for the Contexter interface.
-//
-// It receives a pointer to a value that will be stored inside the context.
-// Values are distiguished by their type, that means that SetContext replaces
-// and stored value of the same type.
-// A pointer type that is not supported results in a panic.
-func (c *context) SetContext(ctxPtr interface{}) {
-	switch ty := ctxPtr.(type) {
-	case *Token:
-		c.token = *ty
-	default:
-		panic(fmt.Sprintf("unsupported context: %T", ctxPtr))
-	}
-}
-
-// Wrap implements the wrap.Wrapper interface.
-//
-// When the request is served, the response writer is wrapped by a
-// new *context which is passed to the next handlers ServeHTTP method.
-func (c context) Wrap(next http.Handler) http.Handler {
-	var f http.HandlerFunc
-	f = func(rw http.ResponseWriter, req *http.Request) {
-		next.ServeHTTP(&context{ResponseWriter: rw}, req)
-	}
-	return f
-}
 
 type app struct{}
 
@@ -67,7 +20,7 @@ func (app) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		rw.Write([]byte(req.FormValue("a")))
 		return
 	}
-	var token Token
+	var token wrapnosurf.Token
 
 	rw.(wrap.Contexter).Context(&token)
 	rw.Write([]byte(string(token)))
@@ -77,11 +30,12 @@ func (app) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 func Example() {
 	stack := wrap.New(
 		context{},
-		&CheckToken{},
-		SetToken{},
+		&wrapnosurf.CheckToken{},
+		wrapnosurf.SetToken{},
 		wrap.Handler(app{}),
 	)
 
+	// here comes the tests
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "http://localhost/", nil)
 	stack.ServeHTTP(rec, req)
@@ -91,6 +45,7 @@ func Example() {
 	rec = httptest.NewRecorder()
 	req = mkPostReq(cookie, token)
 	stack.ServeHTTP(rec, req)
+	fmt.Println("-- success --")
 	fmt.Println(rec.Code)
 	fmt.Println(rec.Body.String())
 
@@ -103,11 +58,13 @@ func Example() {
 	rec = httptest.NewRecorder()
 	req = mkPostReq(cookie, token+"x")
 	stack.ServeHTTP(rec, req)
+	fmt.Println("-- fail --")
 	fmt.Println(rec.Code)
-	fmt.Println(rec.Body.String())
 	// Output:
+	// -- success --
 	// 200
 	// b
+	// -- fail --
 	// 400
 	//
 }
