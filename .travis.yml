@@ -7,9 +7,10 @@ go:
 
 script:
   - go get -t github.com/go-on/wrap-contrib/...
+  - cd wraps
   - go get code.google.com/p/go.tools/cmd/cover
   - go install code.google.com/p/go.tools/cmd/cover
-  - go test ./... -covermode=count -coverprofile=profile.cov
+  - go test . -covermode=count -coverprofile=profile.cov
   - go get github.com/mattn/goveralls
   - go install github.com/mattn/goveralls
   - ../../../../../bin/goveralls -coverprofile=profile.cov -service=travis-ci
