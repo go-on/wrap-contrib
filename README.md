@@ -14,7 +14,7 @@ Content
 -------
 
 - **body writer**: EscapeHTML, GZip, ReadSeeker
-- **error handling**: Catch, Defer
+- **error handling**: Error, Catch, Defer
 - **caching**: ETag, IfNoneMatch, IfMatch
 - **combinators**: After, Before, Around, Fallback, First, Guard
 - **REST**: Head, MethodOverride, (GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)Handler

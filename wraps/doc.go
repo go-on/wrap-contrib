@@ -15,8 +15,9 @@ Content
     - ReadSeeker
 
   error handling:
+    - Error
     - Catch
-    -  Defer
+    - Defer
 
   caching:
     - ETag
