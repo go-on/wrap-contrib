@@ -14,18 +14,18 @@ type dispatchQ struct {
 	method, path string
 }
 
-type context struct{ d, e string }
+type ctx5 struct{ d, e string }
 
-func (c *context) black(w http.ResponseWriter, req *http.Request) {
+func (c *ctx5) black(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "black: d is %#v e is %#v", c.d, c.e)
 }
 
-func (c *context) white(w http.ResponseWriter, req *http.Request) {
+func (c *ctx5) white(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "white: d is %#v e is %#v", c.d, c.e)
 }
 
 // note that this is not a pointer method, so every call is on a fresh instance
-func (c context) New(req *http.Request) http.HandlerFunc {
+func (c ctx5) New(req *http.Request) http.HandlerFunc {
 	q := req.URL.Query()
 	c.d = q.Get("d")
 	c.e = q.Get("e")
@@ -93,7 +93,7 @@ func TestDispatch(t *testing.T) {
 		&MethodHandler{
 			OPTIONS: String("my options"),
 		},
-		StructDispatch(context{}),
+		StructDispatch(ctx5{}),
 		DispatchFunc(dispatchFnA),
 		Dispatch(DispatchFunc(dispatchFnB)),
 		wrap.Handler(GETHandler("/hu", String("get hu"))),

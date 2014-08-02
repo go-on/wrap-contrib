@@ -26,7 +26,7 @@ func (c CatchFunc) Catch(recovered interface{}, w http.ResponseWriter, r *http.R
 	c(recovered, w, r)
 }
 
-// ServeHandle serves the given request by letting the next serve a ResponseBuffer and
+// ServeHTTPNext serves the given request by letting the next serve a ResponseBuffer and
 // catching any panics. If no panic happened, the ResponseBuffer is flushed to the ResponseWriter
 // Otherwise the CatchFunc is called.
 func (c CatchFunc) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
@@ -47,7 +47,7 @@ func (c CatchFunc) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req 
 	next.ServeHTTP(checked, req)
 }
 
-// Wrap wraps the given next handler with the returned handler
+// Wrap implements the wrap.Wrapper interface
 func (c CatchFunc) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(c).Wrap(next)
 }

@@ -9,14 +9,14 @@ import (
 type escapeHTML struct{}
 
 // Wrap wraps the given next handler within a http.HandlerFunc that
-// calls the inner handlers ServeHTTP method with an EscapeHTMLResponseWriter
-func (a escapeHTML) Wrap(next http.Handler) http.Handler {
+// calls the next handlers ServeHTTP method with an EscapeHTMLResponseWriter
+func (e escapeHTML) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(wr http.ResponseWriter, req *http.Request) {
 		next.ServeHTTP(&wrap.EscapeHTML{wr}, req)
 	})
 }
 
-func (a escapeHTML) WrapFunc(next http.HandlerFunc) http.Handler {
+func (e escapeHTML) WrapFunc(next http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(wr http.ResponseWriter, req *http.Request) {
 		next.ServeHTTP(&wrap.EscapeHTML{wr}, req)
 	})

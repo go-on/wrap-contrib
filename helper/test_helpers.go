@@ -54,3 +54,10 @@ func WriteError(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(`500 server error`))
 }
+
+/*
+// PrintBody prints the body of a httptest.ResponseRecorder
+func PrintBody(rec *httptest.ResponseRecorder) {
+	fmt.Println(rec.Body.String())
+}
+*/

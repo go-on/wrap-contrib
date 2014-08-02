@@ -30,6 +30,9 @@ func (w *gzipResponseWriter) SetContext(ctxPtr interface{}) {
 
 type _gzip struct{}
 
+// GZip compresses the body written by the next handlers
+// on the fly if the client did set the request header tAccept-Encoding header to gzip.
+// It also sets the response header Content-Encoding to gzip if it did the compression.
 var GZip = _gzip{}
 
 func (g _gzip) Wrap(next http.Handler) http.Handler {

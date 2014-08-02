@@ -18,7 +18,7 @@ Content
 - **caching**: ETag, IfNoneMatch, IfMatch
 - **combinators**: After, Before, Around, Fallback, First, Guard
 - **REST**: Head, MethodOverride, (GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)Handler
-- **dispatching**: Dispatch, Map, MethodHandler, And, Or, Match(Method|Path|Host|Scheme|QueryHeader)
+- **dispatching**: Dispatch, Map, MethodHandler, And, Or, Match(Method|Path|Host|Scheme|Query|Header)
 - **http.Handler**: (Text|JSON|CSS|HTML|JavaScript)String
 - **header manipulation**: ContentType, (Set|Remove)(Request|Response)Header
 - **integration of 3rd party middleware**: wrapnosurf (github.com/justinas/nosurf), wraphttpauth (github.com/abbot/go-http-auth)

@@ -24,11 +24,16 @@ func (p panicker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 func Example() {
 
 	handler := wrap.New(
-		wraps.HTMLContentType,
-		wraps.ETag,
-		wraps.Before(wraps.String(`<<`)),
-		wraps.After(wraps.String(`>>`)),
-		wraps.Catch(catcher{}),
+
+		wraps.HTMLContentType,            // sets the content type to text/html; charset=utf-8
+		wraps.IfNoneMatch,                // sets 304 (not modified) for If-None-Match headers that matches the etag
+		wraps.ETag,                       // calculates the ETag and sets the corresponding header
+		wraps.Before(wraps.String(`<<`)), // writes << before everything further down the chain
+		wraps.After(wraps.String(`>>`)),  // writes >> after everything further down the chain
+		wraps.Catch(catcher{}),           // catches any panic and let catcher{} handle them
+
+		// forwards the request to a set of request matcher and handler.
+		// handler of the first matching matcher is used
 		wraps.Map(
 			wraps.MatchQuery("name", "peter"), wraps.String("Hi Peter!"),
 			wraps.MatchQuery("name", "mary"), wraps.String("Hello Mary!"),

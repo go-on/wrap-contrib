@@ -8,16 +8,15 @@ import (
 	"net/http"
 	"strings"
 
-	// "github.com/go-on/wrap/responsewriter"
-
 	"github.com/go-on/method"
 	"github.com/go-on/wrap"
 )
 
-// var etagMethods = method.GET | method.HEAD
-
 type etag struct{}
 
+// ETag buffers the body writes of the next handler and calculates a md5 Hash based on the Content-Type + Body
+// combination and sets it as etag in the response header.
+// It does so only for GET and HEAD requests. For GET requests the buffered body is flushed to the underlying response writer.
 var ETag = etag{}
 
 type etaggedWriter struct {
@@ -63,19 +62,25 @@ func (e etag) ServeHTTPNext(next http.Handler, w http.ResponseWriter, r *http.Re
 		et.Header().Set("ETag", fmt.Sprintf("%x", et.h.Sum(nil)))
 	}
 	et.FlushMissing()
-	// et.FlushHeaders()
-	// et.FlushCode()
+
 	if et.buf != nil {
 		et.buf.WriteTo(w)
 	}
 }
 
+// Wrap implements the wrap.Wrapper interface
 func (e etag) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(e).Wrap(next)
 }
 
 type ifNoneMatch struct{}
 
+// IfNoneMatch only acts upon HEAD and GET requests that have a If-None-Match header set.
+// It then runs the next handler and checks if an Etag header is set and if it matches the
+// If-None-Match. It it does, the status code 304 (not modified) is sent (without body).
+// Otherwise the response is flushed as is.
+// The combination of Etag and IfNoneMatch can be used to trigger effective client side caching.
+// But IfNoneMatch may also be used with a custom handler that sets the ETag header.
 var IfNoneMatch = ifNoneMatch{}
 
 // see http://www.freesoft.org/CIE/RFC/2068/187.htm
@@ -122,60 +127,17 @@ func (i ifNoneMatch) ServeHTTPNext(next http.Handler, w http.ResponseWriter, r *
 	checked.FlushMissing()
 }
 
+// Wrap implements the wrap.Wrapper interface.
 func (i ifNoneMatch) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(i).Wrap(next)
 }
-
-/*
-var IfMatchGET = ifMatchGet{}
-
-type ifMatchGet struct{}
-
-// generates the etag and checks it for GET only
-func (i *ifMatchGet) Wrap(next http.Handler) (out http.Handler) {
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		m := method.Method(r.Method)
-
-		if m != method.GET {
-			next.ServeHTTP(w, r)
-		}
-
-		ifmatch := r.Header.Get("If-Match")
-
-		// proceed as normal
-		ifmatch = strings.Trim(ifmatch, `"`)
-
-		if ifmatch == "" || ifmatch == "*" {
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		r.Header.Del("If-Match")
-
-		et := &etaggedWriter{h: md5.New(), CheckedResponseWriter: helper.NewCheckedResponseWriter(w, nil)}
-		et.buf = bytes.NewBuffer(nil)
-
-		next.ServeHTTP(et, r)
-		etag := et.h.Sum(nil)
-
-		if etag != ifmatch {
-			w.Header().Set("ETag", etag)
-			w.WriteHeader(http.StatusPreconditionFailed)
-			return
-		}
-
-		et.WriteHeadersTo(w)
-		et.WriteCodeTo(w)
-		et.buf.WriteTo(w)
-	})
-}
-*/
 
 type ifMatch struct {
 	http.Handler
 }
 
+// Wrap implements the wrap.Wrapper interface.
+//
 // see http://stackoverflow.com/questions/2157124/http-if-none-match-vs-if-match
 func (i *ifMatch) Wrap(next http.Handler) (out http.Handler) {
 
@@ -200,11 +162,6 @@ func (i *ifMatch) Wrap(next http.Handler) (out http.Handler) {
 		}
 
 		checkedHead := wrap.NewPeek(w, nil)
-		/*
-			checkedHead := helper.NewCheckedResponseWriter(w, func(ck *helper.CheckedResponseWriter) bool {
-				return false
-			})
-		*/
 
 		headReq, _ := http.NewRequest("HEAD", r.URL.Path, nil)
 		i.ServeHTTP(checkedHead, headReq)
@@ -226,9 +183,13 @@ func (i *ifMatch) Wrap(next http.Handler) (out http.Handler) {
 	})
 }
 
-// the given handler will receive a head request for the same path
-// and may set an etag in the response
-// if it does so, the etag will be compared to the IfMatch header
+// IfMatch only acts upon GET, PUT, DELETE or PATCH requests, that have the
+// If-Match header set. It then issues a HEAD request to the given handler
+// in order to get the etag from the header and compares the etag to the one
+// given via the If-Match header. If it matches, the next handler is called,
+// otherwise status 412 (precondition failed) is returned
+// IfMatch may be used in combination with a middleware stack that uses ETag or
+// any custom handler that sets the ETag header.
 func IfMatch(h http.Handler) wrap.Wrapper {
 	return &ifMatch{h}
 }

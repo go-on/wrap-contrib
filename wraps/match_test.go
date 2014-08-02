@@ -25,9 +25,6 @@ func TestMatch(t *testing.T) {
 		matchQ{MatchQuery("name", "me"), reqA}: false,
 		matchQ{MatchQuery("name", "me"), reqB}: true,
 
-		matchQ{MatchFragment("frag"), reqA}: false,
-		matchQ{MatchFragment("frag"), reqB}: true,
-
 		matchQ{MatchHeader("X-my", "val"), reqA}: false,
 		matchQ{MatchHeader("X-my", "val"), reqB}: true,
 

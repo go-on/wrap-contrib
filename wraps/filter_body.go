@@ -29,8 +29,7 @@ func (f *filterBody) Wrap(next http.Handler) (out http.Handler) {
 	})
 }
 
-// Filter the body for the given method(s)
-// to filter mutiple method, use FilterBody(method.PATCH|method.OPTIONS)
+// Filter the body for the given method
 func FilterBody(m method.Method) wrap.Wrapper {
 	return &filterBody{m}
 }

@@ -8,21 +8,19 @@ import (
 
 type around struct{ before, after http.Handler }
 
-// ServeHandle serves the given request by calling the before handler followed by the inner
-// handler and followed by the after handler
 func (a around) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 	a.before.ServeHTTP(wr, req)
 	next.ServeHTTP(wr, req)
 	a.after.ServeHTTP(wr, req)
 }
 
-// Wrap wraps the given inner handler with the returned handler
+// Wrap implements the wrap.Wrapper interface
 func (a around) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(a).Wrap(next)
 }
 
 // Around returns a wrapper that calls the given before and after handler
-// before and after the inner handler when serving
+// before and after the next handler when serving
 func Around(before, after http.Handler) wrap.Wrapper {
 	return around{before, after}
 }

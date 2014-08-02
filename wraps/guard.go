@@ -10,7 +10,7 @@ import (
 // If it does so, the wrapper prevents the next Handler from serving.
 type GuardFunc func(http.ResponseWriter, *http.Request)
 
-// ServeHandle lets the GuardFunc serve to a ResponseBuffer and if it changed something
+// ServeHTTPNext lets the GuardFunc serve to a ResponseBuffer and if it changed something
 // the Response is send to the ResponseWriter, preventing the next http.Handler from
 // executing. Otherwise the next handler serves the request.
 func (g GuardFunc) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
@@ -27,7 +27,7 @@ func (g GuardFunc) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req 
 	next.ServeHTTP(wr, req)
 }
 
-// Wrap wraps the given next handler with the returned handler
+// Wrap implements the wrap.Wrapper interface
 func (g GuardFunc) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(g).Wrap(next)
 }

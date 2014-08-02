@@ -67,3 +67,14 @@ func TestWriteError(t *testing.T) {
 		t.Error("should return server error (500)")
 	}
 }
+
+/*
+func ExamplePrintBody(t *testing.T) {
+	rec, req := NewTestRequest("GET", "/")
+	write("here is the body").ServeHTTP(rec, req)
+	PrintBody(rec)
+
+	// Output
+	// here is the body
+}
+*/

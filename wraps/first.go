@@ -30,8 +30,7 @@ func (f first) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(f).Wrap(next)
 }
 
-// First will try all given handler until
-// the first one returns something
+// First will try all given handler until the first one returns something
 func First(handler ...http.Handler) wrap.Wrapper { return first(handler) }
 
 // FirstFunc is like First but for http.HandlerFuncs
