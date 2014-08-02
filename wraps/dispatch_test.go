@@ -43,61 +43,61 @@ func (c context) New(req *http.Request) http.HandlerFunc {
 func TestDispatch(t *testing.T) {
 	dispatchFnA := func(req *http.Request) http.Handler {
 		if req.URL.Path == "/a" {
-			return Write("is a")
+			return String("is a")
 		}
 		return nil
 	}
 
 	dispatchFnB := func(req *http.Request) http.Handler {
 		if req.URL.Path == "/b" {
-			return Write("is b")
+			return String("is b")
 		}
 		return nil
 	}
 
 	r := wrap.New(
-		GETHandler("/company", Write("get company")),
-		POSTHandler("/company", Write("post company")),
-		PATCHHandler("/company", Write("patch company")),
-		DELETEHandler("/company", Write("delete company")),
-		HEADHandler("/company", Write("head company")),
-		PUTHandler("/company", Write("put company")),
-		OPTIONSHandler("/company", Write("options company")),
+		GETHandler("/company", String("get company")),
+		POSTHandler("/company", String("post company")),
+		PATCHHandler("/company", String("patch company")),
+		DELETEHandler("/company", String("delete company")),
+		HEADHandler("/company", String("head company")),
+		PUTHandler("/company", String("put company")),
+		OPTIONSHandler("/company", String("options company")),
 
 		Map(
 			// MatchScheme("http"), He
 
-			MatchQuery("name", "peter"), Write("peter"),
-			MatchQuery("name", "paul"), Write("paul"),
-			And(MatchMethod("POST"), MatchPath("/hi")), Write("ho"),
-			MatchPath("/hi"), Write("hi"),
+			MatchQuery("name", "peter"), String("peter"),
+			MatchQuery("name", "paul"), String("paul"),
+			And(MatchMethod("POST"), MatchPath("/hi")), String("ho"),
+			MatchPath("/hi"), String("hi"),
 
 			MatchPathRegex(regexp.MustCompile(`\/person\/customer\/[0-9]+`)), Map(
 				MatchMethod("GET"),
-				Write("person customers"),
+				String("person customers"),
 			),
 
 			MatchPath("/blubb"),
 			DispatchFunc(dispatchFnA),
 
 			MatchPath("/person"), &MethodHandler{
-				GET:     Write("get person"),
-				POST:    Write("post person"),
-				PATCH:   Write("patch person"),
-				DELETE:  Write("delete person"),
-				HEAD:    Write("head person"),
-				PUT:     Write("put person"),
-				OPTIONS: Write("options person"),
+				GET:     String("get person"),
+				POST:    String("post person"),
+				PATCH:   String("patch person"),
+				DELETE:  String("delete person"),
+				HEAD:    String("head person"),
+				PUT:     String("put person"),
+				OPTIONS: String("options person"),
 			},
 		),
 		&MethodHandler{
-			OPTIONS: Write("my options"),
+			OPTIONS: String("my options"),
 		},
 		StructDispatch(context{}),
 		DispatchFunc(dispatchFnA),
 		Dispatch(DispatchFunc(dispatchFnB)),
-		wrap.Handler(GETHandler("/hu", Write("get hu"))),
-		// wrap.Handler(Write("not found")),
+		wrap.Handler(GETHandler("/hu", String("get hu"))),
+		// wrap.Handler(String("not found")),
 	)
 
 	tests := map[dispatchQ]string{

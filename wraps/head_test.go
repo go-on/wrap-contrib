@@ -16,7 +16,7 @@ func justSetHeader(wr http.ResponseWriter, req *http.Request) {
 func TestHeadRemoveBody(t *testing.T) {
 	h := wrap.New(
 		Head(),
-		wrap.Handler(Write("hi")),
+		wrap.Handler(TextString("hi")),
 	)
 
 	rec, req := NewTestRequest("HEAD", "/")
@@ -29,15 +29,15 @@ func TestHeadRemoveBody(t *testing.T) {
 
 	ctype := rec.Header().Get("Content-Type")
 
-	if ctype != "text/plain" {
-		t.Errorf("Head should have Content-Type of text/plain, but has: %s", ctype)
+	if ctype != "text/plain; charset=utf-8" {
+		t.Errorf("Head should have Content-Type of text/plain; charset=utf-8, but has: %s", ctype)
 	}
 }
 
 func TestHeadPassGet(t *testing.T) {
 	h := wrap.New(
 		Head(),
-		wrap.Handler(Write("hi")),
+		wrap.Handler(TextString("hi")),
 	)
 
 	rec, req := NewTestRequest("GET", "/")
@@ -50,15 +50,15 @@ func TestHeadPassGet(t *testing.T) {
 
 	ctype := rec.Header().Get("Content-Type")
 
-	if ctype != "text/plain" {
-		t.Errorf("Head should have Content-Type of text/plain, but has: %s", ctype)
+	if ctype != "text/plain; charset=utf-8" {
+		t.Errorf("Head should have Content-Type of text/plain; charset=utf-8, but has: %s", ctype)
 	}
 }
 
 func TestHeadPassStatus(t *testing.T) {
 	h := wrap.New(
 		Head(),
-		wrap.HandlerFunc(NotFound),
+		wrap.Handler(http.NotFoundHandler()),
 	)
 
 	rec, req := NewTestRequest("HEAD", "/")
@@ -74,7 +74,7 @@ func TestHeadNoChange(t *testing.T) {
 	h := wrap.New(
 		Before(http.HandlerFunc(justSetHeader)),
 		Head(),
-		wrap.HandlerFunc(DoNothing),
+		wrap.HandlerFunc(wrap.NoOp),
 	)
 
 	rec, req := NewTestRequest("HEAD", "/")

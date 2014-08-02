@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-// Write is a string that is a simple http.Handler that writes itself to the http.ResponseWriter
-type Write string
+// write is a string that is a simple http.Handler that writes itself to the http.ResponseWriter
+type write string
 
 // ServeHTTP writes the string to the http.ResponseWriter, sets the Content-Length and
 // the Content-Type to text/plain
-func (ww Write) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (ww write) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(ww)))
 	fmt.Fprintf(w, string(ww))
@@ -49,6 +49,12 @@ func AssertHeader(rec *httptest.ResponseRecorder, key, val string) error {
 	return nil
 }
 
+func WriteError(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Write([]byte(`500 server error`))
+}
+
+/*
 // NotFound writes a status code of 404 and the body "not found" to the ResponseWriter
 func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(404)
@@ -57,3 +63,4 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 
 // DoNothing is a http.Handler that does nothing
 func DoNothing(rw http.ResponseWriter, req *http.Request) {}
+*/

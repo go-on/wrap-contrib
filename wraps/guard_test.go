@@ -9,8 +9,8 @@ import (
 
 func TestGuardForbidden(t *testing.T) {
 	h := wrap.New(
-		Guard(Write("forbidden")),
-		wrap.Handler(Write("hu?")),
+		Guard(String("forbidden")),
+		wrap.Handler(String("hu?")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
@@ -22,8 +22,8 @@ func TestGuardForbidden(t *testing.T) {
 
 func TestGuardPassthrough(t *testing.T) {
 	h := wrap.New(
-		GuardFunc(DoNothing),
-		wrap.Handler(Write("*")),
+		GuardFunc(wrap.NoOp),
+		wrap.Handler(String("*")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

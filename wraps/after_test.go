@@ -9,8 +9,8 @@ import (
 
 func TestAfter(t *testing.T) {
 	h := wrap.New(
-		After(Write(" after")),
-		wrap.Handler(Write("the day")),
+		After(String(" after")),
+		wrap.Handler(String("the day")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

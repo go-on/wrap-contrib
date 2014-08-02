@@ -10,14 +10,14 @@ import (
 func TestAround(t *testing.T) {
 	h := wrap.New(
 		Around(
-			Write("<body>"),
-			Write("</body>"),
+			String("<body>"),
+			String("</body>"),
 		),
 		AroundFunc(
-			Write("<h1>").ServeHTTP,
-			Write("</h1>").ServeHTTP,
+			String("<h1>").ServeHTTP,
+			String("</h1>").ServeHTTP,
 		),
-		wrap.Handler(Write("rock around the clock")),
+		wrap.Handler(String("rock around the clock")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

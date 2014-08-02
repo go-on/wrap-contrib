@@ -11,7 +11,7 @@ import (
 func TestStop(t *testing.T) {
 	h := wrap.New(
 		Stop(),
-		wrap.Handler(Write("a")),
+		wrap.Handler(String("a")),
 	)
 
 	rec := httptest.NewRecorder()

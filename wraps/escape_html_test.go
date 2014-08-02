@@ -10,7 +10,7 @@ import (
 func TestEscapeHTML1(t *testing.T) {
 	h := wrap.New(
 		EscapeHTML,
-		wrap.Handler(Write(`abc<d>"e'f&g`)),
+		wrap.Handler(String(`abc<d>"e'f&g`)),
 	)
 
 	rw, req := NewTestRequest("GET", "/")
@@ -41,7 +41,7 @@ func TestEscapeHTML2(t *testing.T) {
 
 func TestEscapeHTML3(t *testing.T) {
 	rw, req := NewTestRequest("GET", "/")
-	EscapeHTML.WrapFunc(Write(`abc<d>"e'f&g`).ServeHTTP).ServeHTTP(rw, req)
+	EscapeHTML.WrapFunc(String(`abc<d>"e'f&g`).ServeHTTP).ServeHTTP(rw, req)
 
 	err := AssertResponse(rw, `abc&lt;d&gt;&#34;e&#39;f&amp;g`, 200)
 

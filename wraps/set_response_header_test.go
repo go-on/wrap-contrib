@@ -10,7 +10,7 @@ import (
 func TestSetResponseHeader(t *testing.T) {
 	h := wrap.New(
 		SetResponseHeader("Y-test", "hiho"),
-		wrap.Handler(Write("huho")),
+		wrap.Handler(String("huho")),
 	)
 
 	rw, rq := headerRequest()

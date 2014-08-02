@@ -1,9 +1,10 @@
 package wraps
 
 import (
-	"github.com/go-on/method"
 	"net/http"
 	"testing"
+
+	"github.com/go-on/method"
 
 	"github.com/go-on/wrap"
 	"github.com/go-on/wrap-contrib/helper"
@@ -12,7 +13,7 @@ import (
 func TestFilterBody(t *testing.T) {
 	r := wrap.New(
 		FilterBody(method.GET),
-		wrap.Handler(helper.Write("the body")),
+		wrap.Handler(String("the body")),
 	)
 
 	rw, req := helper.NewTestRequest("GET", "/")
@@ -37,7 +38,7 @@ func TestFilterBody(t *testing.T) {
 
 	r = wrap.New(
 		FilterBody(method.GET),
-		wrap.HandlerFunc(helper.NotFound),
+		wrap.Handler(http.NotFoundHandler()),
 	)
 
 	rw, req = helper.NewTestRequest("GET", "/")

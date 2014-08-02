@@ -11,7 +11,7 @@ import (
 func TestPrepareLikeMuxCleanPath(t *testing.T) {
 	h := wrap.New(
 		PrepareLikeMux(),
-		wrap.Handler(Write("one two")),
+		wrap.Handler(String("one two")),
 	)
 	rw, req := NewTestRequest("GET", "/hi//")
 	h.ServeHTTP(rw, req)
@@ -59,7 +59,7 @@ func TestPrepareLikeMux(t *testing.T) {
 	h := wrap.New(
 		setRequestURI("*"),
 		PrepareLikeMux(),
-		wrap.Handler(Write("one two")),
+		wrap.Handler(String("one two")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	req.ProtoMinor = 0

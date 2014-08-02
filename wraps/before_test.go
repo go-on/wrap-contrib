@@ -9,8 +9,8 @@ import (
 
 func TestBefore(t *testing.T) {
 	h := wrap.New(
-		Before(Write("before ")),
-		wrap.Handler(Write("midnight")),
+		Before(String("before ")),
+		wrap.Handler(String("midnight")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

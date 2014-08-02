@@ -43,12 +43,12 @@ func TestContentTypeOk(t *testing.T) {
 func TestContentTypeError(t *testing.T) {
 	h := wrap.New(
 		ContentType("my/contenttype"),
-		wrap.HandlerFunc(NotFound),
+		wrap.HandlerFunc(WriteError),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
 
-	err := AssertResponse(rw, "not found", 404)
+	err := AssertResponse(rw, "500 server error", 500)
 	if err != nil {
 		t.Error(err.Error())
 	}

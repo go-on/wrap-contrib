@@ -52,7 +52,7 @@ func TestCatchNoPanic(t *testing.T) {
 	p := panicker{}
 	h := wrap.New(
 		Catch(p),
-		wrap.Handler(Write("hi!")),
+		wrap.Handler(String("hi!")),
 	)
 
 	rw, req := NewTestRequest("GET", "/")

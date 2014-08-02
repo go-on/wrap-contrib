@@ -11,8 +11,8 @@ import (
 func TestFirstFirstWins(t *testing.T) {
 	h := wrap.New(
 		First(
-			Write("a"),
-			Write("b"),
+			String("a"),
+			String("b"),
 		),
 	)
 	rw, req := NewTestRequest("GET", "/")
@@ -26,10 +26,10 @@ func TestFirstFirstWins(t *testing.T) {
 func TestFirstSecondWins(t *testing.T) {
 	h := wrap.New(
 		First(
-			http.HandlerFunc(DoNothing),
-			Write("b"),
+			http.HandlerFunc(wrap.NoOp),
+			String("b"),
 		),
-		wrap.Handler(Write("*")),
+		wrap.Handler(String("*")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
@@ -42,10 +42,10 @@ func TestFirstSecondWins(t *testing.T) {
 func TestFirstPassthrough(t *testing.T) {
 	h := wrap.New(
 		FirstFunc(
-			DoNothing,
-			DoNothing,
+			wrap.NoOp,
+			wrap.NoOp,
 		),
-		wrap.Handler(Write("*")),
+		wrap.Handler(String("*")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

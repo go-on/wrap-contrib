@@ -12,8 +12,8 @@ func TestFallbackFirstWins(t *testing.T) {
 	h := wrap.New(
 		Fallback(
 			[]int{404},
-			Write("a"),
-			Write("b"),
+			String("a"),
+			String("b"),
 		),
 	)
 	rw, req := NewTestRequest("GET", "/")
@@ -37,8 +37,8 @@ func TestFallbackFirstWinsSetHeaders(t *testing.T) {
 		Fallback(
 			[]int{404},
 			http.HandlerFunc(setHeader),
-			// Write("a"),
-			Write("b"),
+			// String("a"),
+			String("b"),
 		),
 	)
 	rw, req := NewTestRequest("GET", "/")
@@ -53,10 +53,10 @@ func TestFallbackSecondWins(t *testing.T) {
 	h := wrap.New(
 		Fallback(
 			[]int{404},
-			http.HandlerFunc(DoNothing),
-			Write("b"),
+			http.Handler(http.NotFoundHandler()),
+			String("b"),
 		),
-		wrap.Handler(Write("*")),
+		wrap.Handler(String("*")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
@@ -70,8 +70,8 @@ func TestFallbackSecondWinsIgnoring(t *testing.T) {
 	h := wrap.New(
 		Fallback(
 			[]int{404},
-			http.HandlerFunc(NotFound),
-			Write("b"),
+			http.Handler(http.NotFoundHandler()),
+			String("b"),
 		),
 	)
 	rw, req := NewTestRequest("GET", "/")
@@ -86,13 +86,13 @@ func TestFallbackFirstWinsNotIgnoring(t *testing.T) {
 	h := wrap.New(
 		Fallback(
 			[]int{405},
-			http.HandlerFunc(NotFound),
-			Write("b"),
+			http.Handler(http.NotFoundHandler()),
+			String("b"),
 		),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
-	err := AssertResponse(rw, "not found", 404)
+	err := AssertResponse(rw, "404 page not found", 404)
 	if err != nil {
 		t.Error(err)
 	}
@@ -102,10 +102,10 @@ func TestFallbackPassthrough(t *testing.T) {
 	h := wrap.New(
 		FallbackFunc(
 			[]int{404},
-			NotFound,
-			NotFound,
+			http.NotFoundHandler().ServeHTTP,
+			http.NotFoundHandler().ServeHTTP,
 		),
-		wrap.Handler(Write("*")),
+		wrap.Handler(String("*")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
