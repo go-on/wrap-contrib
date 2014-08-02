@@ -60,6 +60,7 @@ func Example() {
 	stack.ServeHTTP(rec, req)
 	fmt.Println("-- fail --")
 	fmt.Println(rec.Code)
+	fmt.Println(rec.Body.String())
 	// Output:
 	// -- success --
 	// 200
