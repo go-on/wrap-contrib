@@ -37,7 +37,7 @@ func Example() {
 
 	// here comes the tests
 	rec := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "http://localhost/", nil)
+	req, _ := http.NewRequest("GET", "/", nil)
 	stack.ServeHTTP(rec, req)
 	token := rec.Body.String()
 	cookie := parseCookie(rec)
@@ -50,13 +50,14 @@ func Example() {
 	fmt.Println(rec.Body.String())
 
 	rec = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "http://localhost/", nil)
+	req, _ = http.NewRequest("GET", "/", nil)
 	stack.ServeHTTP(rec, req)
 	token = rec.Body.String()
-	cookie = parseCookie(rec)
+	// cookie = parseCookie(rec)
 
 	rec = httptest.NewRecorder()
-	req = mkPostReq(cookie, token+"x")
+	// req = mkPostReq(cookie, token+"x")
+	req, _ = http.NewRequest("POST", "/", nil)
 	stack.ServeHTTP(rec, req)
 	fmt.Println("-- fail --")
 	fmt.Println(rec.Code)
