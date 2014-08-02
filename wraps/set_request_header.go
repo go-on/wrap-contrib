@@ -10,18 +10,17 @@ type setRequestHeader struct {
 	Key, Val string
 }
 
+// SetRequestHeader sets a request header
 func SetRequestHeader(key, val string) wrap.Wrapper {
 	return &setRequestHeader{key, val}
 }
 
-// ServeHandle sets the header of the key to the value and calls
-// the inner handler after that
-func (s *setRequestHeader) ServeHTTPNext(inner http.Handler, wr http.ResponseWriter, req *http.Request) {
+func (s *setRequestHeader) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
 	req.Header.Set(s.Key, s.Val)
-	inner.ServeHTTP(wr, req)
+	next.ServeHTTP(wr, req)
 }
 
-// Wrap wraps the given inner handler with the returned handler
+// Wrap implements the wrapper interface
 func (s *setRequestHeader) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(s).Wrap(next)
 }

@@ -12,7 +12,7 @@ Content
   body writer:
     - EscapeHTML
     - GZip
-    - Reader
+    - ReadSeeker
 
   error handling:
     - Catch

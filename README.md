@@ -13,7 +13,7 @@ Yes, please! Make a pull request and let me see. If it is not matured consider a
 Content
 -------
 
-- **body writer**: EscapeHTML, GZip, Reader
+- **body writer**: EscapeHTML, GZip, ReadSeeker
 - **error handling**: Catch, Defer
 - **caching**: ETag, IfNoneMatch, IfMatch
 - **combinators**: After, Before, Around, Fallback, First, Guard

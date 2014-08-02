@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-on/method"
+
 	"github.com/go-on/wrap"
 )
 
@@ -65,4 +67,54 @@ func (ø methodOverride) Wrap(next http.Handler) (out http.Handler) {
 
 func MethodOverride() methodOverride {
 	return methodOverride{}
+}
+
+// MethodOverrideByField overrides the request method by looking for a field that
+// contains the target method. It only acts on POST requests and on post bodies.
+type MethodOverrideByField string
+
+func (m MethodOverrideByField) serveHTTP(w http.ResponseWriter, r *http.Request) bool {
+	if r.Method != method.POST.String() {
+		return false
+	}
+	override := r.PostFormValue(string(m))
+
+	// fmt.Printf("override: %#v\n", r.PostForm)
+
+	if override != "" {
+		expectedMethod, accepted := acceptedOverrides[override]
+		if !accepted {
+			w.WriteHeader(http.StatusPreconditionFailed)
+			fmt.Fprintf(w, `Unsupported value for %s: %#v.
+Supported values are PUT, DELETE, PATCH and OPTIONS`, m, override)
+			return true
+		}
+
+		if expectedMethod != r.Method {
+			w.WriteHeader(http.StatusPreconditionFailed)
+			fmt.Fprintf(w, `%s with value %s only allowed for %s requests.`,
+				m, override, expectedMethod)
+			return true
+		}
+		// everything went fine, override the method
+		// r.Header.Del(m)
+		r.Form.Del(string(m))
+		r.Method = override
+	}
+	return false
+}
+
+func (m MethodOverrideByField) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	m.serveHTTP(w, r)
+}
+
+func (m MethodOverrideByField) Wrap(next http.Handler) (out http.Handler) {
+	var f http.HandlerFunc
+	f = func(rw http.ResponseWriter, req *http.Request) {
+		if m.serveHTTP(rw, req) {
+			return
+		}
+		next.ServeHTTP(rw, req)
+	}
+	return f
 }

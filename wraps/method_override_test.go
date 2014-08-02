@@ -3,6 +3,9 @@ package wraps
 import (
 	"fmt"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/go-on/wrap"
@@ -55,4 +58,117 @@ func TestMethodOverride(t *testing.T) {
 		t.Error(err.Error())
 	}
 
+}
+
+func TestMethodOverrideByFieldDo(t *testing.T) {
+	// MethodOverrideByField
+	stack := wrap.New(
+		MethodOverrideByField("_method"),
+		wrap.HandlerFunc(methodWrite),
+	)
+
+	vals := url.Values(map[string][]string{})
+	vals.Add("_method", "PATCH")
+	req, _ := http.NewRequest("POST", "/", strings.NewReader(vals.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+	stack.ServeHTTP(rec, req)
+	err := helper.AssertResponse(rec, "PATCH", 200)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestMethodOverrideByFieldDont1(t *testing.T) {
+	// MethodOverrideByField
+	stack := wrap.New(
+		MethodOverrideByField("_method"),
+		wrap.HandlerFunc(methodWrite),
+	)
+
+	vals := url.Values(map[string][]string{})
+	// vals.Add("_method", "PATCH")
+	req, _ := http.NewRequest("POST", "/", strings.NewReader(vals.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+	stack.ServeHTTP(rec, req)
+	err := helper.AssertResponse(rec, "POST", 200)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestMethodOverrideHTTPHandler(t *testing.T) {
+	// MethodOverrideByField
+	stack := wrap.New(
+		Before(MethodOverrideByField("_method")),
+		wrap.HandlerFunc(methodWrite),
+	)
+
+	vals := url.Values(map[string][]string{})
+	// vals.Add("_method", "PATCH")
+	req, _ := http.NewRequest("POST", "/", strings.NewReader(vals.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+	stack.ServeHTTP(rec, req)
+	err := helper.AssertResponse(rec, "POST", 200)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestMethodOverrideByFieldNotAllowed1(t *testing.T) {
+	// MethodOverrideByField
+	stack := wrap.New(
+		MethodOverrideByField("_method"),
+		wrap.HandlerFunc(methodWrite),
+	)
+
+	vals := url.Values(map[string][]string{})
+	vals.Add("_method", "OPTIONS")
+	req, _ := http.NewRequest("POST", "/", strings.NewReader(vals.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+	stack.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusPreconditionFailed {
+		t.Error("expecting code 412, got: %d", rec.Code)
+	}
+
+}
+
+func TestMethodOverrideByFieldNotAllowed2(t *testing.T) {
+	// MethodOverrideByField
+	stack := wrap.New(
+		MethodOverrideByField("_method"),
+		wrap.HandlerFunc(methodWrite),
+	)
+
+	vals := url.Values(map[string][]string{})
+	vals.Add("_method", "MURKS")
+	req, _ := http.NewRequest("POST", "/", strings.NewReader(vals.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+	stack.ServeHTTP(rec, req)
+	//err := helper.AssertResponse(rec, "_method with value OPTIONS only allowed for GET requests.POST", 412)
+	if rec.Code != http.StatusPreconditionFailed {
+		t.Error("expecting code 412, got: %d", rec.Code)
+	}
+}
+
+func TestMethodOverrideByFieldDont2(t *testing.T) {
+	// MethodOverrideByField
+	stack := wrap.New(
+		MethodOverrideByField("_method"),
+		wrap.HandlerFunc(methodWrite),
+	)
+
+	req, _ := http.NewRequest("GET", "/", nil)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+	stack.ServeHTTP(rec, req)
+	err := helper.AssertResponse(rec, "GET", 200)
+	if err != nil {
+		t.Error(err.Error())
+	}
 }

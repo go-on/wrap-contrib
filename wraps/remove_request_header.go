@@ -21,14 +21,14 @@ func (rh RemoveRequestHeader) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// ServeHandle removes request headers that are identical to the string
+// ServeHTTPNext removes request headers that are identical to the string
 // or have it as prefix. Then the inner http.Handler is called
 func (rh RemoveRequestHeader) ServeHTTPNext(inner http.Handler, w http.ResponseWriter, r *http.Request) {
 	rh.ServeHTTP(w, r)
 	inner.ServeHTTP(w, r)
 }
 
-// Wrap wraps the given inner handler with the returned handler
+// Wrap wraps the given next handler with the returned handler
 func (rh RemoveRequestHeader) Wrap(next http.Handler) http.Handler {
 	return wrap.NextHandler(rh).Wrap(next)
 }

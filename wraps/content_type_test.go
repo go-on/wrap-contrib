@@ -24,7 +24,7 @@ func TestContentTypeNothing(t *testing.T) {
 func TestContentTypeOk(t *testing.T) {
 	h := wrap.New(
 		ContentType("my/contenttype"),
-		Reader(strings.NewReader("hi")),
+		ReadSeeker(strings.NewReader("hi")),
 	)
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

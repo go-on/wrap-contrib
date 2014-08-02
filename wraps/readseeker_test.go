@@ -9,10 +9,10 @@ import (
 	. "github.com/go-on/wrap-contrib/helper"
 )
 
-func TestReader(t *testing.T) {
+func TestReadSeeker(t *testing.T) {
 
 	r := strings.NewReader("hiho")
-	h := wrap.New(Reader(r))
+	h := wrap.New(ReadSeeker(r))
 
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
@@ -47,10 +47,10 @@ func (e errorReader) Seek(int64, int) (i int64, err error) {
 	return
 }
 
-func TestReaderErrorRead(t *testing.T) {
+func TestReadSeekerErrorRead(t *testing.T) {
 
 	r := errorReader{}
-	h := wrap.New(Reader(r))
+	h := wrap.New(ReadSeeker(r))
 
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)
@@ -61,9 +61,9 @@ func TestReaderErrorRead(t *testing.T) {
 	}
 }
 
-func TestReaderErrorSeek(t *testing.T) {
+func TestReadSeekerErrorSeek(t *testing.T) {
 	r := errorReader{true}
-	h := wrap.New(Reader(r))
+	h := wrap.New(ReadSeeker(r))
 
 	rw, req := NewTestRequest("GET", "/")
 	h.ServeHTTP(rw, req)

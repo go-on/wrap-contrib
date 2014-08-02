@@ -11,7 +11,7 @@ import (
 // or have if as prefix
 type RemoveResponseHeader string
 
-// ServeHandle removes the response headers that are identical to the string
+// ServeHTTPNext removes the response headers that are identical to the string
 // or have if as prefix after the next handler is run
 func (rh RemoveResponseHeader) ServeHTTPNext(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	bodyWritten := false

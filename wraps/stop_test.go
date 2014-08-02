@@ -10,7 +10,7 @@ import (
 
 func TestStop(t *testing.T) {
 	h := wrap.New(
-		Stop(),
+		Stop,
 		wrap.Handler(String("a")),
 	)
 
