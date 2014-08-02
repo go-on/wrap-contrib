@@ -17,10 +17,10 @@ Content
 - **error handling**: Catch, Defer
 - **caching**: ETag, IfNoneMatch, IfMatch
 - **combinators**: After, Before, Around, Fallback, First, Guard
-- **REST**: Head, MethodOverride, GETHandler, POSTHandler, PUTHandler, DELETEHandler, PATCHHandler, OPTIONSHandler, HEADHandler
-- **dispatching**: Dispatch, Map, MethodHandler, And, Or, MatchMethod, MatchPath, MatchHost, MatchScheme, MatchQuery, MatchHeader
-- **http.Handler**: String, TextString, JSONString, CSSString, HTMLString, JavaScriptString
-- **header manipulation**: ContentType, RemoveRequestHeader, RemoveResponseHeader, SetRequestHeader, SetResponseHeader
+- **REST**: Head, MethodOverride, (GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)Handler
+- **dispatching**: Dispatch, Map, MethodHandler, And, Or, Match(Method|Path|Host|Scheme|QueryHeader)
+- **http.Handler**: (Text|JSON|CSS|HTML|JavaScript)String
+- **header manipulation**: ContentType, (Set|Remove)(Request|Response)Header
 - **integration of 3rd party middleware**: wrapnosurf (github.com/justinas/nosurf), wraphttpauth (github.com/abbot/go-http-auth)
 
 

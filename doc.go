@@ -37,7 +37,7 @@ Content
     - MethodHandler
     - And
     - Or
-    - Match(Method |Path|Host|Scheme|Query|Header)
+    - Match(Method|Path|Host|Scheme|Query|Header)
 
   REST:
     - Head
