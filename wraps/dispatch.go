@@ -10,6 +10,7 @@ type Dispatcher interface {
 	Dispatch(*http.Request) http.Handler
 }
 
+/*
 // StructDispatcher is a dispatcher that has a New method to dispatch
 // requests to http.HandlerFunc. Common use case is a struct that allows
 // to share and reuse state. The method New then must be defined on the
@@ -19,7 +20,9 @@ type Dispatcher interface {
 type StructDispatcher interface {
 	New(*http.Request) http.HandlerFunc
 }
+*/
 
+/*
 type FuncDispatcher func(*http.Request) http.HandlerFunc
 
 func (fd FuncDispatcher) Dispatch(r *http.Request) http.Handler {
@@ -29,6 +32,7 @@ func (fd FuncDispatcher) Dispatch(r *http.Request) http.Handler {
 	}
 	return h
 }
+*/
 
 type DispatchFunc func(*http.Request) http.Handler
 
@@ -61,13 +65,17 @@ func Dispatch(d Dispatcher) DispatchFunc {
 	return DispatchFunc(d.Dispatch)
 }
 
+/*
 func FuncDispatch(fn FuncDispatcher) DispatchFunc {
 	return Dispatch(fn)
 }
+*/
 
+/*
 func StructDispatch(stru StructDispatcher) DispatchFunc {
 	return FuncDispatch(stru.New)
 }
+*/
 
 type matchHandler struct {
 	Matcher

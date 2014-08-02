@@ -93,7 +93,7 @@ func TestDispatch(t *testing.T) {
 		&MethodHandler{
 			OPTIONS: String("my options"),
 		},
-		StructDispatch(ctx5{}),
+		// StructDispatch(ctx5{}),
 		DispatchFunc(dispatchFnA),
 		Dispatch(DispatchFunc(dispatchFnB)),
 		wrap.Handler(GETHandler("/hu", String("get hu"))),
@@ -133,8 +133,11 @@ func TestDispatch(t *testing.T) {
 
 		dispatchQ{"GET", "/person/customer/6"}: "person customers",
 
-		dispatchQ{"GET", "/context/black?d=ddd&e=eee"}:   `black: d is "ddd" e is "eee"`,
-		dispatchQ{"GET", "/context/white?d=dddd&e=eeee"}: `white: d is "dddd" e is "eeee"`,
+		// dispatchQ{"GET", "/context/black?d=ddd&e=eee"}:   `black: d is "ddd" e is "eee"`,
+		// dispatchQ{"GET", "/context/white?d=dddd&e=eeee"}: `white: d is "dddd" e is "eeee"`,
+
+		// dispatchQ{"GET", "/context/black?d=ddd&e=eee"}:   ``,
+		// dispatchQ{"GET", "/context/white?d=dddd&e=eeee"}: ``,
 	}
 
 	for q, res := range tests {
