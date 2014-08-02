@@ -30,22 +30,21 @@ func (c CatchFunc) Catch(recovered interface{}, w http.ResponseWriter, r *http.R
 // catching any panics. If no panic happened, the ResponseBuffer is flushed to the ResponseWriter
 // Otherwise the CatchFunc is called.
 func (c CatchFunc) ServeHTTPNext(next http.Handler, wr http.ResponseWriter, req *http.Request) {
-	defer func() {
-		if p := recover(); p != nil {
-			c(p, wr, req)
-		}
-	}()
-
 	checked := wrap.NewPeek(wr, func(ck *wrap.Peek) bool {
 		ck.FlushHeaders()
 		ck.FlushCode()
 		return true
 	})
 
+	defer func() {
+		if p := recover(); p != nil {
+			c(p, wr, req)
+		} else {
+			checked.FlushMissing()
+		}
+	}()
+
 	next.ServeHTTP(checked, req)
-
-	checked.FlushMissing()
-
 }
 
 // Wrap wraps the given next handler with the returned handler
