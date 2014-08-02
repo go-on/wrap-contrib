@@ -9,15 +9,51 @@ A walk through some of the middlewares can be found at http://metakeule.github.i
 
 Content
 
-  - body writer: EscapeHTML, GZip, Reader
-  - error handling: Catch, Defer
-  - caching: ETag, IfNoneMatch, IfMatch
-  - combinators: After, Before, Around, Fallback, First, Guard
-  - REST: Head, MethodOverride, GETHandler, POSTHandler, PUTHandler, DELETEHandler, PATCHHandler, OPTIONSHandler, HEADHandler
-  - dispatching: Dispatch, Map, MethodHandler, And, Or, MatchMethod, MatchPath, MatchHost, MatchScheme, MatchQuery, MatchHeader
-  - http.Handler: String, TextString, JSONString, CSSString, HTMLString, JavaScriptString
-  - header manipulation: ContentType, RemoveRequestHeader, RemoveResponseHeader, SetRequestHeader, SetResponseHeader
-  - integration of 3rd party middleware: wrapnosurf (github.com/justinas/nosurf), wraphttpauth (github.com/abbot/go-http-auth)
+  body writer:
+    - EscapeHTML
+    - GZip
+    - Reader
+
+  error handling:
+    - Catch
+    -  Defer
+
+  caching:
+    - ETag
+    - IfNoneMatch
+    - IfMatch
+
+  combinators:
+    - After
+    - Before
+    - Around
+    - Fallback
+    - First
+    - Guard
+
+  dispatching:
+    - Dispatch
+    - Map
+    - MethodHandler
+    - And
+    - Or
+    - Match(Method |Path|Host|Scheme|Query|Header)
+
+  REST:
+    - Head
+    - MethodOverride
+    - (GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)Handler
+
+ http.Handler:
+    - (Text|JSON|CSS|HTML|JavaScript)String
+
+ header manipulation:
+    - ContentType
+    - (Remove|Set)(Request|Response)Header
+
+ integration of 3rd party middleware:
+    - wrapnosurf (github.com/justinas/nosurf)
+    - wraphttpauth (github.com/abbot/go-http-auth)
 
 Contributions
 
