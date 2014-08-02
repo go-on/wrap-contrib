@@ -44,14 +44,15 @@ Content
     - MethodOverride
     - (GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)Handler
 
- http.Handler:
+  http.Handler:
     - (Text|JSON|CSS|HTML|JavaScript)String
 
- header manipulation:
+  header manipulation:
     - ContentType
     - (Remove|Set)(Request|Response)Header
 
- integration of 3rd party middleware:
+Integration of 3rd party middleware	(http://godoc.org/github.com/go-on/wrap-contrib/third-party)
+
     - wrapnosurf (github.com/justinas/nosurf)
     - wraphttpauth (github.com/abbot/go-http-auth)
 
