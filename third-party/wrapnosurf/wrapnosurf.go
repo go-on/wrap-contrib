@@ -10,10 +10,15 @@ import (
 	"github.com/justinas/nosurf"
 )
 
+// Token is the type that is saved inside a wrap.Contexter and
+// represents a csrf token from the github.com/justinas/nosurf package.
 type Token string
 
+// Tokenfield is the name of the form field that submits a csrf token
 var TokenField = "csrf_token"
 
+// SetToken is a wrap.Wrapper that sets a csrf token in the Contexter
+// (response writer) on GET requests.
 type SetToken struct{}
 
 func (SetToken) Wrap(next http.Handler) http.Handler {
@@ -29,6 +34,9 @@ func (SetToken) Wrap(next http.Handler) http.Handler {
 	return f
 }
 
+// CheckToken is a wrap.Wrapper that checks the token via the github.com/justinas/nosurf
+// package. Its attributes relate to the corresponding nosurf options. If they are nil,
+// they are not set.
 type CheckToken struct {
 	FailureHandler http.Handler
 	BaseCookie     *http.Cookie
