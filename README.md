@@ -16,12 +16,12 @@ Content
 - **body writer**: EscapeHTML, GZip, Reader
 - **error handling**: Catch, Defer
 - **caching**: ETag, IfNoneMatch, IfMatch
-- **security**: Guard, CSRF (via nosurf)
-- **combinators**: After, Before, Around, Fallback, First
+- **combinators**: After, Before, Around, Fallback, First, Guard
 - **REST**: Head, MethodOverride, GETHandler, POSTHandler, PUTHandler, DELETEHandler, PATCHHandler, OPTIONSHandler, HEADHandler
 - **dispatching**: Dispatch, Map, MethodHandler, And, Or, MatchMethod, MatchPath, MatchHost, MatchScheme, MatchQuery, MatchHeader
 - **http.Handler**: String, TextString, JSONString, CSSString, HTMLString, JavaScriptString
 - **header manipulation**: ContentType, RemoveRequestHeader, RemoveResponseHeader, SetRequestHeader, SetResponseHeader
+- **integration of 3rd party middleware**: wrapnosurf (github.com/justinas/nosurf), wraphttpauth (github.com/abbot/go-http-auth)
 
 
 More Middleware
