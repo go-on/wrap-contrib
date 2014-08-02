@@ -7,10 +7,22 @@ Package wrapcontrib provides middleware (wraps) and helpers for http://github.co
 
 A walk through some of the middlewares can be found at http://metakeule.github.io/article/tour-de-wrap-middleware.html.
 
-Status
+Content
 
-100% test coverage.
-This package is considered complete and the API is stable  (with the exception of the helper subpackage).
+  - body writer: EscapeHTML, GZip, Reader
+  - error handling: Catch, Defer
+  - caching: ETag, IfNoneMatch, IfMatch
+  - security: Guard, CSRF (via nosurf)
+  - combinators: After, Before, Around, Fallback, First
+  - REST: Head, MethodOverride, GETHandler, POSTHandler, PUTHandler, DELETEHandler, PATCHHandler, OPTIONSHandler, HEADHandler
+  - dispatching: Dispatch, Map, MethodHandler, And, Or, MatchMethod, MatchPath, MatchHost, MatchScheme, MatchQuery, MatchHeader
+  - http.Handler: String, TextString, JSONString, CSSString, HTMLString, JavaScriptString
+  - header manipulation: ContentType, RemoveRequestHeader, RemoveResponseHeader, SetRequestHeader, SetResponseHeader
+
+Contributions
+
+Yes, please! Make a pull request and let me see. If it is not matured consider adding it to http://github.com/go-on/wrap-contrib-testing.
+
 
 More Middleware
 
