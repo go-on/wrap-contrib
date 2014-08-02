@@ -3,7 +3,7 @@ wrap-contrib
 
 Collection of middleware (wrappers) for [github.com/go-on/wrap](http://github.com/go-on/wrap)
 
-[![Build Status](https://secure.travis-ci.org/go-on/wrap-contrib.png)](http://travis-ci.org/go-on/wrap-contrib) [![GoDoc](https://godoc.org/github.com/go-on/wrap-contrib?status.png)](https://godoc.org/github.com/go-on/wrap-contrib) [![Coverage Status](https://img.shields.io/coveralls/go-on/wrap-contrib.svg)](https://coveralls.io/r/go-on/wrap-contrib?branch=master) [![Project status](http://img.shields.io/status/stable.png?color=green)](#) [![Total views](https://sourcegraph.com/api/repos/github.com/go-on/wrap-contrib/counters/views.png)](https://sourcegraph.com/github.com/go-on/wrap-contrib)
+[![Build Status](https://drone.io/github.com/go-on/wrap-contrib/status.png)](https://drone.io/github.com/go-on/wrap-contrib/latest) [![GoDoc](https://godoc.org/github.com/go-on/wrap-contrib?status.png)](https://godoc.org/github.com/go-on/wrap-contrib) [![Coverage Status](https://img.shields.io/coveralls/go-on/wrap-contrib.svg)](https://coveralls.io/r/go-on/wrap-contrib?branch=master) [![Project status](http://img.shields.io/status/stable.png?color=green)](#) [![Total views](https://sourcegraph.com/api/repos/github.com/go-on/wrap-contrib/counters/views.png)](https://sourcegraph.com/github.com/go-on/wrap-contrib)
 
 Contributions
 -------------
