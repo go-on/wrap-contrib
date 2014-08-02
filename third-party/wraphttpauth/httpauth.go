@@ -10,32 +10,6 @@ import (
 	"github.com/go-on/wrap"
 )
 
-/*
-func Secret(user, realm string) string {
-if user == "john" {
-// password is "hello"
-return "$1$dlPL2MqE$oQmn16q49SqdmhenQuNgs1"
-}
-return ""
-}
-
-
-func Secret(user, realm string) string {
-if user == "john" {
-// password is "hello"
-return "b98e16cbc3d01734b264adba7baa3bf9"
-}
-return ""
-}
-
-	authenticator := auth.NewDigestAuthenticator("example.com", Secret)
-http.HandleFunc("/", authenticator.Wrap(handle))
-
-
-	authenticator := auth.NewBasicAuthenticator("example.com", Secret)
-http.HandleFunc("/", authenticator.Wrap(handle))
-*/
-
 type digest struct {
 	secrets func(user, realm string) string
 	realm   string
@@ -50,6 +24,8 @@ func (d *digest) Wrap(next http.Handler) http.Handler {
 	return authenticator.Wrap(fn)
 }
 
+// Digest returns a wrapper that authenticates via auth.NewDigestAuthenticator
+// and saves the resulting *auth.AuthenticatedRequest in the Contexter (response writer).
 func Digest(realm string, secrets func(user, realm string) string) wrap.Wrapper {
 	return &digest{secrets, realm}
 }
@@ -68,6 +44,8 @@ func (d *basic) Wrap(next http.Handler) http.Handler {
 	return authenticator.Wrap(fn)
 }
 
+// Basic returns a wrapper that authenticates via auth.NewBasicAuthenticator
+// and saves the resulting *auth.AuthenticatedRequest in the Contexter (response writer).
 func Basic(realm string, secrets func(user, realm string) string) wrap.Wrapper {
 	return &basic{secrets, realm}
 }
