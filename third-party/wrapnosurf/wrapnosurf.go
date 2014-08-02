@@ -1,5 +1,7 @@
-// Package wrapnosurf provides integration of the github.com/justinas/nosurf package with the wrapper
-// framework.
+/*
+Package wrapnosurf provides wrappers based on the github.com/justinas/nosurf package.
+
+*/
 
 package wrapnosurf
 

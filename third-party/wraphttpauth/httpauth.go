@@ -1,6 +1,7 @@
-// Package wraphttpauth provides integration of the github.com/abbot/go-http-auth package with the wrapper
-// framework
+/*
+Package wraphttpauth provides wrappers based on the github.com/abbot/go-http-auth package.
 
+*/
 package wraphttpauth
 
 import (
