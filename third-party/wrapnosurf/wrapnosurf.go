@@ -2,7 +2,6 @@
 Package wrapnosurf provides wrappers based on the github.com/justinas/nosurf package.
 
 */
-
 package wrapnosurf
 
 import (
