@@ -55,3 +55,8 @@ func (e *errorHandler) Wrap(next http.Handler) http.Handler {
 func ErrorHandler(h http.Handler) wrap.Wrapper {
 	return &errorHandler{h}
 }
+
+// ErrorHandlerFunc is the same as ErrorHandler but for a http.HandlerFunc
+func ErrorHandlerFunc(h http.HandlerFunc) wrap.Wrapper {
+	return &errorHandler{h}
+}

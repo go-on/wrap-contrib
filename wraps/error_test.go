@@ -79,3 +79,19 @@ func TestErrorHandlerWithError(t *testing.T) {
 		t.Error(err.Error())
 	}
 }
+
+func TestErrorHandlerFuncWithError(t *testing.T) {
+	stack := wrap.New(
+		context{},
+		ErrorHandlerFunc(String("error happend").ServeHTTP),
+		setError(true),
+		String("all right"),
+	)
+
+	rec, req := NewTestRequest("GET", "/")
+	stack.ServeHTTP(rec, req)
+	err := AssertResponse(rec, "error happend", 200)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
