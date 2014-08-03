@@ -7,12 +7,14 @@ import (
 	"github.com/abbot/go-http-auth"
 )
 
+// context is an example how a wrap.Contexter can be build in order to get used
+// with wraphttpauth
 type context struct {
 	http.ResponseWriter
 	authReq auth.AuthenticatedRequest
 }
 
-// context is an implementation for the Contexter interface.
+// Context is an implementation for the Contexter interface.
 //
 // It receives a pointer to a value that is already stored inside the context.
 // Values are distiguished by their type.

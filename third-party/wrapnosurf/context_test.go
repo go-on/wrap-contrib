@@ -14,7 +14,7 @@ type context struct {
 	token wrapnosurf.Token
 }
 
-// context is an implementation for the Contexter interface.
+// Context is an implementation for the Contexter interface.
 //
 // It receives a pointer to a value that is already stored inside the context.
 // Values are distiguished by their type.
