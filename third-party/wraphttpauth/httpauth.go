@@ -5,6 +5,9 @@ Package wraphttpauth provides wrappers based on the github.com/abbot/go-http-aut
 package wraphttpauth
 
 import (
+	"crypto/md5"
+	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/abbot/go-http-auth"
@@ -49,4 +52,15 @@ func (d *basic) Wrap(next http.Handler) http.Handler {
 // and saves the resulting *auth.AuthenticatedRequest in the Contexter (response writer).
 func Basic(realm string, secrets func(user, realm string) string) wrap.Wrapper {
 	return &basic{secrets, realm}
+}
+
+func DigestSecret(user, password, realm string) string {
+	m := md5.New()
+	io.WriteString(m, user+":"+realm+":"+password)
+	return fmt.Sprintf("%x", m.Sum(nil))
+}
+
+func BasicSecret(password, salt, magic string) string {
+	return string(auth.MD5Crypt([]byte(password), []byte(salt), []byte(magic)))
+	// md5e := auth.NewMD5Entry("$1$dlPL2MqE$oQmn16q49SqdmhenQuNgs1")
 }

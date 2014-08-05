@@ -17,13 +17,19 @@ type context struct {
 // Context sets the value of the given pointer to the value of the same type
 // that is stored inside of the context.
 // A pointer type that is not supported results in a panic.
-func (c *context) Context(ctxPtr interface{}) {
+// Context returns if ctxPtr will be nil after return
+func (c *context) Context(ctxPtr interface{}) (found bool) {
+	found = true // save work
 	switch ty := ctxPtr.(type) {
 	case *error:
+		if c.err == nil {
+			return false
+		}
 		*ty = c.err
 	default:
 		panic(fmt.Sprintf("unsupported context: %T", ctxPtr))
 	}
+	return
 }
 
 // SetContext is an implementation for the Contexter interface.

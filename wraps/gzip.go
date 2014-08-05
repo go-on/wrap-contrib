@@ -20,8 +20,8 @@ func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
-func (w *gzipResponseWriter) Context(ctxPtr interface{}) {
-	w.ResponseWriter.(wrap.Contexter).Context(ctxPtr)
+func (w *gzipResponseWriter) Context(ctxPtr interface{}) bool {
+	return w.ResponseWriter.(wrap.Contexter).Context(ctxPtr)
 }
 
 func (w *gzipResponseWriter) SetContext(ctxPtr interface{}) {

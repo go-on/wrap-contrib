@@ -11,7 +11,7 @@ import (
 // with wraphttpauth
 type context struct {
 	http.ResponseWriter
-	authReq auth.AuthenticatedRequest
+	authReq *auth.AuthenticatedRequest
 }
 
 // Context is an implementation for the Contexter interface.
@@ -21,13 +21,18 @@ type context struct {
 // Context sets the value of the given pointer to the value of the same type
 // that is stored inside of the context.
 // A pointer type that is not supported results in a panic.
-func (c *context) Context(ctxPtr interface{}) {
+func (c *context) Context(ctxPtr interface{}) (found bool) {
+	found = true
 	switch ty := ctxPtr.(type) {
 	case *auth.AuthenticatedRequest:
-		*ty = c.authReq
+		if c.authReq == nil {
+			return false
+		}
+		*ty = *c.authReq
 	default:
 		panic(fmt.Sprintf("unsupported context: %T", ctxPtr))
 	}
+	return
 }
 
 // SetContext is an implementation for the Contexter interface.
@@ -39,7 +44,7 @@ func (c *context) Context(ctxPtr interface{}) {
 func (c *context) SetContext(ctxPtr interface{}) {
 	switch ty := ctxPtr.(type) {
 	case *auth.AuthenticatedRequest:
-		c.authReq = *ty
+		c.authReq = ty
 	default:
 		panic(fmt.Sprintf("unsupported context: %T", ctxPtr))
 	}

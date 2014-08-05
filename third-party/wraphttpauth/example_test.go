@@ -14,16 +14,16 @@ import (
 
 func secretBasic(user, realm string) string {
 	if user == "john" {
-		// password is "hello"
-		return "$1$dlPL2MqE$oQmn16q49SqdmhenQuNgs1"
+		salt := "dlPL2MqExdf"
+		magic := "$1343$"
+		return wraphttpauth.BasicSecret("hello", salt, magic)
 	}
 	return ""
 }
 
 func secretDigest(user, realm string) string {
 	if user == "john" {
-		// password is "hello"
-		return "b98e16cbc3d01734b264adba7baa3bf9"
+		return wraphttpauth.DigestSecret("john", "hello", "example.com")
 	}
 	return ""
 }
