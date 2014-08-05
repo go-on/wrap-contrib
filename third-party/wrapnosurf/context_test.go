@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-on/wrap"
 	"github.com/go-on/wrap-contrib/third-party/wrapnosurf"
 )
 
@@ -13,6 +14,9 @@ type context struct {
 	http.ResponseWriter
 	token wrapnosurf.Token
 }
+
+// make sure to fulfill the Contexter interface
+var _ wrap.Contexter = &context{}
 
 // Context is an implementation for the Contexter interface.
 //

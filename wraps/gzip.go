@@ -16,6 +16,9 @@ type gzipResponseWriter struct {
 	http.ResponseWriter
 }
 
+// make sure to fulfill the Contexter interface
+var _ wrap.Contexter = &gzipResponseWriter{}
+
 func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }

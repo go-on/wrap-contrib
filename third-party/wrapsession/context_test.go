@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-on/wrap"
 	"github.com/gorilla/sessions"
 )
 
@@ -14,6 +15,9 @@ type context struct {
 	session *sessions.Session
 	err     error
 }
+
+// make sure to fulfill the Contexter interface
+var _ wrap.Contexter = &context{}
 
 // Context is an implementation for the Contexter interface.
 //

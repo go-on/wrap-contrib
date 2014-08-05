@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-on/wrap"
+
 	"github.com/abbot/go-http-auth"
 )
 
@@ -13,6 +15,9 @@ type context struct {
 	http.ResponseWriter
 	authReq *auth.AuthenticatedRequest
 }
+
+// make sure to fulfill the Contexter interface
+var _ wrap.Contexter = &context{}
 
 // Context is an implementation for the Contexter interface.
 //

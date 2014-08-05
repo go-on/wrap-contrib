@@ -3,12 +3,17 @@ package wraps
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/go-on/wrap"
 )
 
 type context struct {
 	http.ResponseWriter
 	err error
 }
+
+// make sure to fulfill the Contexter interface
+var _ wrap.Contexter = &context{}
 
 // context is an implementation for the Contexter interface.
 //
