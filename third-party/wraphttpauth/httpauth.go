@@ -19,6 +19,16 @@ type digest struct {
 	realm   string
 }
 
+// to be sure to implement the ContextWrapper interface
+var _ wrap.ContextWrapper = &digest{}
+
+// Validate makes sure that ctx supports the needed types
+func (d *digest) ValidateContext(ctx wrap.Contexter) {
+	var r auth.AuthenticatedRequest
+	ctx.SetContext(&r)
+	ctx.Context(&r)
+}
+
 func (d *digest) Wrap(next http.Handler) http.Handler {
 	authenticator := auth.NewDigestAuthenticator(d.realm, d.secrets)
 	fn := func(w http.ResponseWriter, r *auth.AuthenticatedRequest) {
@@ -37,6 +47,16 @@ func Digest(realm string, secrets func(user, realm string) string) wrap.Wrapper 
 type basic struct {
 	secrets func(user, realm string) string
 	realm   string
+}
+
+// to be sure to implement the ContextWrapper interface
+var _ wrap.ContextWrapper = &basic{}
+
+// Validate makes sure that ctx supports the needed types
+func (d *basic) ValidateContext(ctx wrap.Contexter) {
+	var r auth.AuthenticatedRequest
+	ctx.SetContext(&r)
+	ctx.Context(&r)
 }
 
 func (d *basic) Wrap(next http.Handler) http.Handler {

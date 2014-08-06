@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/go-on/wrap-contrib/wraps"
-
 	"github.com/go-on/wrap"
+	"github.com/go-on/wrap-contrib/stack"
 	"github.com/go-on/wrap-contrib/third-party/wrapsession"
-
+	"github.com/go-on/wrap-contrib/wraps"
 	"github.com/gorilla/sessions"
 )
 
@@ -17,42 +16,77 @@ var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
 func errorHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
-	w.(wrap.Contexter).Context(&err)
 	w.WriteHeader(http.StatusInternalServerError)
 	fmt.Fprintf(w, "An error happened: %s\n", err.Error())
 	fmt.Printf("An error happened: %s\n", err.Error())
+	return
 }
 
-func writeToSession(next http.Handler, w http.ResponseWriter, r *http.Request) {
+type writeToSession struct{}
+
+var _ wrap.ContextWrapper = writeToSession{}
+
+func (writeToSession) ValidateContext(ctx wrap.Contexter) {
 	var session sessions.Session
-	w.(wrap.Contexter).Context(&session)
-	session.Values["name"] = r.URL.Query().Get("name")
-	session.AddFlash("Hello, flash messages world!")
-	next.ServeHTTP(w, r)
+	ctx.SetContext(&session)
+	ctx.Context(&session)
 }
 
-func readFromSession(w http.ResponseWriter, r *http.Request) {
-	var session sessions.Session
-	w.(wrap.Contexter).Context(&session)
-	fmt.Printf("Name: %s\n", session.Values["name"])
-	for _, fl := range session.Flashes() {
-		fmt.Printf("Flash: %v\n", fl)
+func (writeToSession) Wrap(next http.Handler) http.Handler {
+	var f http.HandlerFunc
+	f = func(w http.ResponseWriter, r *http.Request) {
+		var session sessions.Session
+		w.(wrap.Contexter).Context(&session)
+		session.Values["name"] = r.URL.Query().Get("name")
+		session.AddFlash("Hello, flash messages world!")
+		next.ServeHTTP(w, r)
 	}
+	return f
+}
+
+type readFromSession struct{}
+
+var _ wrap.ContextWrapper = readFromSession{}
+
+func (readFromSession) ValidateContext(ctx wrap.Contexter) {
+	var session sessions.Session
+	ctx.SetContext(&session)
+	ctx.Context(&session)
+}
+
+func (readFromSession) Wrap(next http.Handler) http.Handler {
+	var f http.HandlerFunc
+	f = func(w http.ResponseWriter, r *http.Request) {
+		var session sessions.Session
+		w.(wrap.Contexter).Context(&session)
+		fmt.Printf("Name: %s\n", session.Values["name"])
+		for _, fl := range session.Flashes() {
+			fmt.Printf("Flash: %v\n", fl)
+		}
+	}
+	return f
 }
 
 func Example() {
-	stack := wrap.New(
-		context{},
+	// stack.New() sets and checks global Contexter
+	stack.New(&context{})
+
+	// stack.Use() checks if global Contexter supports the context data needed by the wrappers
+	// before adding them to the global Contexter
+	stack.Use(
 		wraps.ErrorHandlerFunc(errorHandler),
 		wrapsession.SaveAndClear,
 		wrapsession.Session(store, "my-session-name"),
-		wrap.NextHandlerFunc(writeToSession),
-		wrap.HandlerFunc(readFromSession),
+		writeToSession{},
+		readFromSession{},
 	)
+
+	// put the stack together and return a handler
+	h := stack.Handler()
 
 	req, _ := http.NewRequest("GET", "/?name=Peter", nil)
 	rec := httptest.NewRecorder()
-	stack.ServeHTTP(rec, req)
+	h.ServeHTTP(rec, req)
 
 	// Output:
 	// Name: Peter

@@ -28,18 +28,35 @@ func secretDigest(user, realm string) string {
 	return ""
 }
 
-func app(rw http.ResponseWriter, req *http.Request) {
-	var authReq auth.AuthenticatedRequest
-	rw.(wrap.Contexter).Context(&authReq)
-	rw.Write([]byte("user " + authReq.Username + " authenticated"))
-	return
+type app struct{}
+
+var _ wrap.ContextWrapper = app{}
+
+func (a app) ValidateContext(ctx wrap.Contexter) {
+	var r auth.AuthenticatedRequest
+	ctx.Context(&r)
+	ctx.SetContext(&r)
+}
+
+func (a app) Wrap(next http.Handler) http.Handler {
+	var f http.HandlerFunc
+	f = func(rw http.ResponseWriter, req *http.Request) {
+		var authReq auth.AuthenticatedRequest
+		rw.(wrap.Contexter).Context(&authReq)
+		rw.Write([]byte("user " + authReq.Username + " authenticated"))
+	}
+	return f
 }
 
 func ExampleBasic() {
-	stackBasic := wrap.New(
-		context{},
+
+	// check that the context fulfills all requirements
+	wrap.ValidateWrapperContexts(&context{}, app{}, wraphttpauth.Basic("example.com", secretBasic))
+
+	stackBasic := wrap.Stack(
+		&context{},
 		wraphttpauth.Basic("example.com", secretBasic),
-		wrap.HandlerFunc(app),
+		app{},
 	)
 
 	rec := httptest.NewRecorder()
@@ -67,10 +84,13 @@ func ExampleBasic() {
 
 func ExampleDigest() {
 
-	stackDigest := wrap.New(
-		context{},
+	// check that the context fulfills all requirements
+	wrap.ValidateWrapperContexts(&context{}, app{}, wraphttpauth.Digest("example.com", secretDigest))
+
+	stackDigest := wrap.Stack(
+		&context{},
 		wraphttpauth.Digest("example.com", secretDigest),
-		wrap.HandlerFunc(app),
+		app{},
 	)
 
 	rec := httptest.NewRecorder()

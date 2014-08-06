@@ -13,26 +13,42 @@ import (
 
 type app struct{}
 
+var _ wrap.ContextWrapper = app{}
+
+func (app) ValidateContext(ctx wrap.Contexter) {
+	var token wrapnosurf.Token
+	ctx.SetContext(&token)
+	ctx.Context(&token)
+}
+
 // ServeHTTP serves the form value "a" for POST requests and otherwise the token
-func (app) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	if req.Method == "POST" {
-		req.ParseForm()
-		rw.Write([]byte(req.FormValue("a")))
+func (app) Wrap(next http.Handler) http.Handler {
+	var f http.HandlerFunc
+	f = func(rw http.ResponseWriter, req *http.Request) {
+		if req.Method == "POST" {
+			req.ParseForm()
+			rw.Write([]byte(req.FormValue("a")))
+			return
+		}
+		var token wrapnosurf.Token
+
+		rw.(wrap.Contexter).Context(&token)
+		rw.Write([]byte(string(token)))
 		return
 	}
-	var token wrapnosurf.Token
-
-	rw.(wrap.Contexter).Context(&token)
-	rw.Write([]byte(string(token)))
-	return
+	return f
 }
 
 func Example() {
-	stack := wrap.New(
-		context{},
+
+	// ensure all context requirements are fulfilled
+	wrap.ValidateWrapperContexts(&context{}, &wrapnosurf.CheckToken{}, wrapnosurf.SetToken{}, app{})
+
+	stack := wrap.Stack(
+		&context{},
 		&wrapnosurf.CheckToken{},
 		wrapnosurf.SetToken{},
-		wrap.Handler(app{}),
+		app{},
 	)
 
 	// here comes the tests

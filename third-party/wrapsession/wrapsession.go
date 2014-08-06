@@ -21,6 +21,14 @@ type session struct {
 	Name  string
 }
 
+var _ wrap.ContextWrapper = &session{}
+
+func (s *session) ValidateContext(ctx wrap.Contexter) {
+	var sess sessions.Session
+	ctx.SetContext(&sess)
+	ctx.Context(&sess)
+}
+
 func (s *session) Wrap(next http.Handler) http.Handler {
 	var f http.HandlerFunc
 	f = func(rw http.ResponseWriter, req *http.Request) {
@@ -38,6 +46,17 @@ func Session(store sessions.Store, name string) wrap.Wrapper {
 }
 
 type saveAndClear struct{}
+
+var _ wrap.ContextWrapper = saveAndClear{}
+
+func (s saveAndClear) ValidateContext(ctx wrap.Contexter) {
+	var sess sessions.Session
+	var err error
+	ctx.SetContext(&sess)
+	ctx.Context(&sess)
+	ctx.SetContext(&err)
+	ctx.Context(&err)
+}
 
 func (s saveAndClear) Wrap(next http.Handler) http.Handler {
 	var f http.HandlerFunc

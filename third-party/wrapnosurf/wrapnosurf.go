@@ -22,6 +22,14 @@ var TokenField = "csrf_token"
 // (response writer) on GET requests.
 type SetToken struct{}
 
+var _ wrap.ContextWrapper = SetToken{}
+
+func (SetToken) ValidateContext(ctx wrap.Contexter) {
+	var token Token
+	ctx.SetContext(&token)
+	ctx.Context(&token)
+}
+
 func (SetToken) Wrap(next http.Handler) http.Handler {
 	var f http.HandlerFunc
 
@@ -46,6 +54,16 @@ type CheckToken struct {
 	ExemptRegexps  []interface{}
 	ExemptFunc     func(r *http.Request) bool
 }
+
+// strictly not needed for the CheckToken wrapper, but since it makes no sense without
+// SetToken, check it anyway
+func (c *CheckToken) ValidateContext(ctx wrap.Contexter) {
+	var token Token
+	ctx.SetContext(&token)
+	ctx.Context(&token)
+}
+
+var _ wrap.ContextWrapper = &CheckToken{}
 
 func (c *CheckToken) Wrap(next http.Handler) http.Handler {
 	ns := nosurf.New(next)
