@@ -13,6 +13,16 @@ type errorHandler struct {
 	http.Handler
 }
 
+var _ wrap.ContextWrapper = &errorHandler{}
+
+// Validate makes sure that ctx supports the needed types
+func (e *errorHandler) ValidateContext(ctx wrap.Contexter) {
+	var err error
+	// since Context should panic for unsupported types,
+	// this should be enough
+	ctx.Context(&err)
+}
+
 func (e *errorHandler) Wrap(next http.Handler) http.Handler {
 
 	// returns true, if error happened and was handled, otherwise false
