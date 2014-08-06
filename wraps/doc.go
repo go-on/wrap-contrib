@@ -56,6 +56,7 @@ Integration of 3rd party middleware	(http://godoc.org/github.com/go-on/wrap-cont
 
     - wrapnosurf (github.com/justinas/nosurf)
     - wraphttpauth (github.com/abbot/go-http-auth)
+    - wrapsession (github.com/gorilla/sessions)
 
 Contributions
 

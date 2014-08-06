@@ -21,7 +21,7 @@ Content
 - **dispatching**: Dispatch, Map, MethodHandler, And, Or, Match(Method|Path|Host|Scheme|Query|Header)
 - **http.Handler**: (Text|JSON|CSS|HTML|JavaScript)String
 - **header manipulation**: ContentType, (Set|Remove)(Request|Response)Header
-- **integration of 3rd party middleware**: wrapnosurf (github.com/justinas/nosurf), wraphttpauth (github.com/abbot/go-http-auth)
+- **integration of 3rd party middleware**: wrapnosurf (github.com/justinas/nosurf), wraphttpauth (github.com/abbot/go-http-auth), wrapsession (github.com/gorilla/sessions)
 
 
 More Middleware
