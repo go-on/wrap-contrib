@@ -1,6 +1,7 @@
 package wraps
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-on/wrap"
@@ -13,6 +14,10 @@ type ContentType string
 // SetContentType sets the content type in the given ResponseWriter
 func (c ContentType) SetContentType(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", string(c))
+}
+
+func (c ContentType) String() string {
+	return fmt.Sprintf("<ContentType %#v>", string(c))
 }
 
 // ServeHandle serves the given request with the next handler and after that
