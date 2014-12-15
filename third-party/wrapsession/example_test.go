@@ -9,7 +9,7 @@ import (
 	"gopkg.in/go-on/wrap-contrib.v2/stack"
 	"gopkg.in/go-on/wrap-contrib.v2/third-party/wrapsession"
 	"gopkg.in/go-on/wrap-contrib.v2/wraps"
-	"github.com/gorilla/sessions"
+	"gopkg.in/go-on/sessions.v1"
 )
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))

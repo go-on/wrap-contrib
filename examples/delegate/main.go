@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"gopkg.in/go-on/router.v2"
-	"github.com/gorilla/sessions"
+	"gopkg.in/go-on/sessions.v1"
 	// "gopkg.in/go-on/wrap.v2-contrib-testing/wrapstesting"
-	"github.com/gorilla/context"
+	"gopkg.in/go-on/context.v1"
 	// "gopkg.in/go-on/router.v2"
 	// "gopkg.in/go-on/router.v2/route"
 	"net/http"

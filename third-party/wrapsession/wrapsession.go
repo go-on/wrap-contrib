@@ -12,8 +12,8 @@ import (
 	"net/http"
 
 	"gopkg.in/go-on/wrap.v2"
-	"github.com/gorilla/context"
-	"github.com/gorilla/sessions"
+	"gopkg.in/go-on/context.v1"
+	"gopkg.in/go-on/sessions.v1"
 )
 
 type session struct {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"gopkg.in/go-on/wrap.v2"
-	"github.com/gorilla/sessions"
+	"gopkg.in/go-on/sessions.v1"
 )
 
 // context is an example how a wrap.Contexter can be build in order to get used
