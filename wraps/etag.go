@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-on/method"
+	"gopkg.in/go-on/method.v1"
 	"gopkg.in/go-on/wrap.v2"
 )
 

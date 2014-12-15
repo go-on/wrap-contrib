@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/go-on/method"
+	"gopkg.in/go-on/method.v1"
 
 	"gopkg.in/go-on/wrap.v2"
 	"gopkg.in/go-on/wrap-contrib.v2/helper"
