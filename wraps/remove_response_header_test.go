@@ -6,7 +6,7 @@ import (
 
 	. "github.com/go-on/wrap-contrib/helper"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 func serveRemoveResponseTest(h http.Handler) (ctype string) {

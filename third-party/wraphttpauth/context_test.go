@@ -3,7 +3,7 @@ package wraphttpauth_test
 import (
 	"net/http"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 
 	"github.com/abbot/go-http-auth"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 // ContentType writes the content type if the next handler was successful

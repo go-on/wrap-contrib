@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 	"github.com/go-on/wrap-contrib/stack"
 	"github.com/go-on/wrap-contrib/third-party/wrapsession"
 	"github.com/go-on/wrap-contrib/wraps"

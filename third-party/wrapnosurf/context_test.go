@@ -3,7 +3,7 @@ package wrapnosurf_test
 import (
 	"net/http"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 	"github.com/go-on/wrap-contrib/third-party/wrapnosurf"
 )
 

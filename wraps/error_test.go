@@ -7,7 +7,7 @@ import (
 
 	. "github.com/go-on/wrap-contrib/helper"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 func TestErrorHandlerNoError1(t *testing.T) {

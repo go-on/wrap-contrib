@@ -3,7 +3,7 @@ package wraps
 import (
 	"net/http"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 // Catcher provides a Catch method that is called if a http.Handler recovered

@@ -2,7 +2,7 @@ package wraps
 
 import (
 	"github.com/go-on/method"
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 
 	"net/http"
 )

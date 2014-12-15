@@ -3,7 +3,7 @@ package wraps
 import (
 	"net/http"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 type setRequestHeader struct {

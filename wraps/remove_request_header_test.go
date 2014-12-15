@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 	. "github.com/go-on/wrap-contrib/helper"
 )
 

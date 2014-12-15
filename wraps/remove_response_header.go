@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 // RemoveResponseHeader removes response headers that are identical to the string

@@ -3,7 +3,7 @@ package wraps
 import (
 	"net/http"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 // Error a type based on error that should be saved by a wrap.Contexter (response writer)

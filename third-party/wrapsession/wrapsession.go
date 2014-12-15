@@ -11,7 +11,7 @@ package wrapsession
 import (
 	"net/http"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 	"github.com/gorilla/context"
 	"github.com/gorilla/sessions"
 )

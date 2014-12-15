@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 type gzipResponseWriter struct {

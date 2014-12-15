@@ -9,7 +9,7 @@ import (
 	"github.com/go-on/wrap-contrib/third-party/wraphttpauth"
 
 	"github.com/abbot/go-http-auth"
-	"github.com/go-on/wrap"
+	"gopkg.in/go-on/wrap.v2"
 )
 
 func secretBasic(user, realm string) string {
