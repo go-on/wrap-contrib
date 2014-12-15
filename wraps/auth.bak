@@ -1,0 +1,178 @@
+package wraps
+
+// Basic Authentication is no good (no way to logout, credentials are cached in the
+// browser and resubmitted on each request)
+
+/*
+import (
+	"fmt"
+	auth "github.com/go-on/go-http-auth"
+	"github.com/go-on/wrap"
+	"github.com/go-on/wrap-contrib/helper"
+	"net/http"
+)
+
+type basicAuthentication struct {
+	realm string
+	auth  *auth.BasicAuth
+
+	// formHandler should set the status code to 403 or should not set it, if they want to write
+	// a login form
+	formHandler http.Handler
+}
+
+func (b *basicAuthentication) Wrap(in http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if user := b.auth.CheckAuth(r); user != "" {
+			// ar.Header.Set("X-Authenticated-Username", ar.Username)
+			r.Header.Set("X-Authenticated-Username", user)
+			fmt.Println("pass")
+			in.ServeHTTP(w, r)
+			return
+		}
+		if b.formHandler != nil {
+			// w.Header().Set("WWW-Authenticate", value)
+			fake := helper.NewResponseBuffer(w)
+			b.formHandler.ServeHTTP(fake, r)
+
+			if !fake.HasChanged() {
+				fmt.Println("fake did not change")
+				w.Header().Set("WWW-Authenticate", fmt.Sprintf(`Basic realm="%s"`, b.realm))
+				w.WriteHeader(401)
+				return
+			}
+
+			if fake.Code != 0 && fake.Code != 403 {
+				fmt.Printf("fake  changed, code: %d\n", fake.Code)
+				fake.WriteHeadersTo(w)
+				fake.WriteCodeTo(w)
+				fake.WriteTo(w)
+				return
+			}
+
+			fake.WriteHeadersTo(w)
+			fmt.Printf("fake  changed, writing standard\n")
+			w.Header().Set("WWW-Authenticate", fmt.Sprintf(`Basic realm="%s"`, b.realm))
+			w.WriteHeader(403)
+			fake.WriteTo(w)
+			return
+		}
+		fmt.Printf("not formhandler\n")
+		w.Header().Set("WWW-Authenticate", fmt.Sprintf(`Basic realm="%s"`, b.realm))
+		w.WriteHeader(401)
+	})
+
+	// auth.JustCheck(b.auth, in)
+}
+
+type Authenticator interface {
+	Password(user, realm string) (password string)
+	Salt() string
+	Magic() string
+}
+
+func wrapAuthenticator(a Authenticator) func(user, realm string) (password string) {
+	return func(user, realm string) (password string) {
+		password = a.Password(user, realm)
+		if password == "" {
+			return
+		}
+		return string(auth.MD5Crypt([]byte(password), []byte(a.Salt()), []byte("$"+a.Magic()+"$")))
+	}
+}
+
+func BasicAuthentication(realm string, authenticator Authenticator, formHandler http.Handler) wrap.Wrapper {
+	return &basicAuthentication{
+		realm,
+		auth.NewBasicAuthenticator(realm, wrapAuthenticator(authenticator)),
+		formHandler,
+	}
+}
+*/
+
+/*
+TODO: have an authentication fallback to be able to do the following:
+
+- try session bases authentication (check if session id is valid and has a user)
+if it fails
+- try basic authentication, the secret provider must store in the session, if we want it
+if it fails
+- print login form
+*/
+
+/*
+type digestAuthentication struct {
+}
+*/
+
+// TODO: make a wrapper to let the session do the authentication
+// if the user is already authenticated
+/*
+type sessionAuthentication struct {
+}
+*/
+
+/*
+authenticator := auth.NewBasicAuthenticator("example.com", Secret)
+	http.HandleFunc("/", auth.JustCheck(authenticator, regular_handler))
+	http.ListenAndServe(":8080", nil)
+*/
+
+/*
+type Authenticator interface {
+	Authenticate(id, password string) bool
+}
+*/
+
+/*
+MD5Crypt([]byte(tc[0]), e.Salt, e.Magic)
+
+MD5Crypt(password, salt, magic []byte) []byte
+
+
+
+
+auth := base64.StdEncoding.EncodeToString([]byte(tc[0] + ":" + tc[1]))
+		r.Header.Set("Authorization", "Basic "+auth)
+
+		secrets := HtpasswdFileProvider("test.htpasswd")
+	a := &BasicAuth{Realm: "example.com", Secrets: secrets}
+
+	if a.CheckAuth(r) != tc[0] {
+			t.Fatalf("CheckAuth failed for user '%s'", tc[0])
+		}
+
+
+ SecretProvider is used by authenticators. Takes user name and realm
+ as an argument, returns secret required for authentication (HA1 for
+ digest authentication, properly encrypted password for basic).
+
+type SecretProvider func(user, realm string) string
+
+*/
+
+/*
+func x() {
+	auth.NewBasicAuthenticator(realm, secrets)
+}
+*/
+
+/*
+Basic authentication, digest authentication
+
+header('WWW-Authenticate: Basic realm="My Realm"');
+
+header('WWW-Authenticate: Digest realm="' . $realm .
+           '",qop="auth",nonce="' . uniqid() . '",opaque="' . md5($realm) .
+           '"');
+
+
+ar.Header.Set("X-Authenticated-Username", ar.Username)
+*/
+
+/*
+type authenticate struct {
+}
+*/
+
+// 401 	Unauthorized

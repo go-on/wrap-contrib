@@ -1,0 +1,133 @@
+package wraps
+
+/*
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+const contextHeaderPrefix = "X-context-"
+
+func SetContext(rq *http.Request, key string, value interface{}) error {
+	b, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	SetContextString(rq, key, fmt.Sprintf("%s", b))
+	return nil
+}
+
+func GetContext(rq *http.Request, key string, value interface{}) error {
+	return json.Unmarshal([]byte(GetContextString(rq, key)), value)
+}
+
+func SetContextString(rq *http.Request, key, value string) {
+	rq.Header.Set(contextHeaderPrefix+key, value)
+}
+
+func GetContextString(rq *http.Request, key string) (value string) {
+	return rq.Header.Get(contextHeaderPrefix + key)
+}
+
+var RemoveContextHeader = RemoveRequestHeader(contextHeaderPrefix)
+*/
+/*
+import (
+	"github.com/go-on/wrap"
+	"net/http"
+)
+
+type ctx struct {
+	http.ResponseWriter
+	// Message interface{}
+	ctx map[string]interface{}
+}
+
+type set struct {
+	Setter
+}
+
+type Setter interface {
+	Set(rw http.ResponseWriter, req *http.Request) (key string, value interface{})
+}
+
+func Set(d Setter) wrap.Wrapper {
+	return &set{d}
+}
+
+func (d *set) Wrap(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		k, v := d.Set(rw, req)
+		ms, ok := rw.(*ctx)
+		if ok {
+			ms.ctx[k] = v
+		} else {
+			ms = &ctx{rw, map[string]interface{}{k: v}}
+		}
+		next.ServeHTTP(ms, req)
+	})
+}
+
+func Get(rw http.ResponseWriter, key string) interface{} {
+	m, ok := rw.(*ctx)
+	if !ok {
+		return nil
+	}
+	return m.ctx[key]
+}
+*/
+
+/*
+type responsewriterHandler struct {
+	http.ResponseWriter
+	http.Handler
+}
+*/
+
+/*
+// Delegator prepares a context and returns a http.HandlerFunc that is a
+// method of the context (and shares the context)
+type Delegator interface {
+	Delegate(rw http.ResponseWriter, req *http.Request) http.HandlerFunc
+}
+*/
+
+/*
+type injector struct {
+	//Delegator
+	Dispatcher
+}
+
+func (inj *injector) Wrap(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		h := inj.Dispatch(req)
+		if h == nil {
+			next.ServeHTTP(rw, req)
+		} else {
+			h.ServeHTTP(rw, req)
+			//next.ServeHTTP(&responsewriterHandler{rw, inj.Dispatch(req)}, req)
+		}
+	})
+}
+
+func Inject(p Dispatcher) wrap.Wrapper {
+	return &injector{p}
+}
+*/
+
+/*
+type handleInjected struct{}
+
+func (hbr handleInjected) Wrap(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		if h, ok := rw.(http.Handler); ok && h != nil {
+			h.ServeHTTP(rw, req)
+			return
+		}
+		next.ServeHTTP(rw, req)
+	})
+}
+
+var HandleByInject wrap.Wrapper = handleInjected{}
+*/
