@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"gopkg.in/go-on/wrap.v2"
-	"github.com/go-on/wrap-contrib/third-party/wrapnosurf"
+	"gopkg.in/go-on/wrap-contrib.v2/third-party/wrapnosurf"
 )
 
 // context is an example how a wrap.Contexter can be build in order to get used

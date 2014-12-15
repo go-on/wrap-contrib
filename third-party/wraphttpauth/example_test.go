@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/go-on/wrap-contrib/third-party/wraphttpauth"
+	"gopkg.in/go-on/wrap-contrib.v2/third-party/wraphttpauth"
 
 	"github.com/abbot/go-http-auth"
 	"gopkg.in/go-on/wrap.v2"

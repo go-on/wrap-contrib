@@ -6,9 +6,9 @@ import (
 	"net/http/httptest"
 
 	"gopkg.in/go-on/wrap.v2"
-	"github.com/go-on/wrap-contrib/stack"
-	"github.com/go-on/wrap-contrib/third-party/wrapsession"
-	"github.com/go-on/wrap-contrib/wraps"
+	"gopkg.in/go-on/wrap-contrib.v2/stack"
+	"gopkg.in/go-on/wrap-contrib.v2/third-party/wrapsession"
+	"gopkg.in/go-on/wrap-contrib.v2/wraps"
 	"github.com/gorilla/sessions"
 )
 

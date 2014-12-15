@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"gopkg.in/go-on/wrap.v2"
-	. "github.com/go-on/wrap-contrib/helper"
+	. "gopkg.in/go-on/wrap-contrib.v2/helper"
 )
 
 func TestBefore(t *testing.T) {
