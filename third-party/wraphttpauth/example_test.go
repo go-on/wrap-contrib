@@ -8,7 +8,7 @@ import (
 
 	"gopkg.in/go-on/wrap-contrib.v2/third-party/wraphttpauth"
 
-	"github.com/abbot/go-http-auth"
+	"gopkg.in/go-on/go-http-auth.v1"
 	"gopkg.in/go-on/wrap.v2"
 )
 

@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/go-on/wrap.v2"
 
-	"github.com/abbot/go-http-auth"
+	"gopkg.in/go-on/go-http-auth.v1"
 )
 
 // context is an example how a wrap.Contexter can be build in order to get used
