@@ -1,9 +1,9 @@
 package account
 
 import (
-	. "github.com/go-on/html/ht"
-	"github.com/go-on/html/types"
-	"github.com/go-on/html/types/placeholder"
+	. "gopkg.in/go-on/lib.v2/html/ht"
+	"gopkg.in/go-on/lib.v2/html/types"
+	"gopkg.in/go-on/lib.v2/html/types/placeholder"
 	"gopkg.in/go-on/wrap-contrib.v2/examples/context/layout/3way/model"
 	"net/http"
 )
