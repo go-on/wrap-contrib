@@ -1,8 +1,8 @@
 package basket
 
 import (
-	. "gopkg.in/go-on/lib.v2/html/ht"
-	"gopkg.in/go-on/lib.v2/html/types"
+	. "gopkg.in/go-on/lib.v3/html/ht"
+	"gopkg.in/go-on/lib.v3/html/types"
 	"gopkg.in/go-on/wrap-contrib.v2/examples/context/layout/3way/model"
 	"net/http"
 )

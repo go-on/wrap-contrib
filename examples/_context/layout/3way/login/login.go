@@ -1,7 +1,7 @@
 package login
 
 import (
-	. "gopkg.in/go-on/lib.v2/html/ht"
+	. "gopkg.in/go-on/lib.v3/html/ht"
 	"gopkg.in/go-on/router.v2"
 	"gopkg.in/go-on/wrap-contrib.v2/examples/context/layout/3way/model"
 	"gopkg.in/go-on/wrap-contrib.v2/examples/context/layout/3way/routes"

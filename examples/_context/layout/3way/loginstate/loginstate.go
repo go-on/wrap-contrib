@@ -1,9 +1,9 @@
 package loginstate
 
 import (
-	. "gopkg.in/go-on/lib.v2/html/ht"
-	"gopkg.in/go-on/lib.v2/html/types"
-	"gopkg.in/go-on/lib.v2/html/types/placeholder"
+	. "gopkg.in/go-on/lib.v3/html/ht"
+	"gopkg.in/go-on/lib.v3/html/types"
+	"gopkg.in/go-on/lib.v3/html/types/placeholder"
 	"net/http"
 )
 

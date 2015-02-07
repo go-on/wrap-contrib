@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	. "gopkg.in/go-on/lib.v2/html/ht"
-	"gopkg.in/go-on/lib.v2/html/types"
-	"gopkg.in/go-on/lib.v2/html/types/placeholder"
+	. "gopkg.in/go-on/lib.v3/html/ht"
+	"gopkg.in/go-on/lib.v3/html/types"
+	"gopkg.in/go-on/lib.v3/html/types/placeholder"
 	"github.com/go-on/replacer"
 	"gopkg.in/go-on/wrap-contrib.v2/wraps"
 	"net/http"
