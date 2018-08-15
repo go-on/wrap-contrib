@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com//go-on/wrap-contrib/third-party/wraphttpauth"
+	"github.com/go-on/wrap-contrib/third-party/wraphttpauth"
 
 	"github.com/go-on/go-http-auth"
 	"github.com/go-on/wrap"

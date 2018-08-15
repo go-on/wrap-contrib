@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/go-on/router"
 	"github.com/go-on/sessions"
-	"gopkg.in/go-on/router.v2"
 	// "gopkg.in/go-on/wrap.v2-contrib-testing/wrapstesting"
 	"github.com/go-on/context"
 	// "gopkg.in/go-on/router.v2"
