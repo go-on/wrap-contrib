@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/go-on/wrap"
-	"gopkg.in/go-on/wrap-contrib.v2/helper"
+	"github.com/go-on/wrap-contrib/helper"
 	// "fmt"
 	//. "launchpad.net/gocheck"
 )

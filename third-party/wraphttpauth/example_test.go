@@ -6,10 +6,10 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"gopkg.in/go-on/wrap-contrib.v2/third-party/wraphttpauth"
+	"github.com//go-on/wrap-contrib/third-party/wraphttpauth"
 
+	"github.com/go-on/go-http-auth"
 	"github.com/go-on/wrap"
-	"gopkg.in/go-on/go-http-auth.v1"
 )
 
 func secretBasic(user, realm string) string {

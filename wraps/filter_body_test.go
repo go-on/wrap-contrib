@@ -7,7 +7,7 @@ import (
 	"github.com/go-on/method"
 
 	"github.com/go-on/wrap"
-	"gopkg.in/go-on/wrap-contrib.v2/helper"
+	"github.com/go-on/wrap-contrib/helper"
 )
 
 func TestFilterBody(t *testing.T) {
