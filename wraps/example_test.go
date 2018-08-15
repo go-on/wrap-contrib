@@ -1,11 +1,12 @@
 package wraps_test
 
+/*
 import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 	"gopkg.in/go-on/wrap-contrib.v2/wraps"
 )
 
@@ -62,3 +63,4 @@ func Example() {
 	// <<catched: panic mysterious person found>>
 
 }
+*/

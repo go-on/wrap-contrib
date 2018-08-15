@@ -6,7 +6,7 @@ package stack
 import (
 	"net/http"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 )
 
 var context wrap.ContextInjecter

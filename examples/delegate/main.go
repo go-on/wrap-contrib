@@ -3,16 +3,16 @@ package main
 import (
 	"fmt"
 
+	"github.com/go-on/sessions"
 	"gopkg.in/go-on/router.v2"
-	"gopkg.in/go-on/sessions.v1"
 	// "gopkg.in/go-on/wrap.v2-contrib-testing/wrapstesting"
-	"gopkg.in/go-on/context.v1"
+	"github.com/go-on/context"
 	// "gopkg.in/go-on/router.v2"
 	// "gopkg.in/go-on/router.v2/route"
 	"net/http"
 	"net/http/httptest"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 	"gopkg.in/go-on/wrap-contrib.v2/wraps"
 )
 

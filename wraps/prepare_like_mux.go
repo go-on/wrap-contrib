@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"path"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 )
 
 // this is taken from pkg/net

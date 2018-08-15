@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 	. "gopkg.in/go-on/wrap-contrib.v2/helper"
 )
 

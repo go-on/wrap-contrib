@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gopkg.in/go-on/wrap.v2"
-	"gopkg.in/go-on/wrap-contrib.v2/wraps"
+	"github.com/go-on/wrap"
+	"github.com/go-on/wrap-contrib/wraps"
 	"net/http"
 )
 

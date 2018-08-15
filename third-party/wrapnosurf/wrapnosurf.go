@@ -7,8 +7,8 @@ package wrapnosurf
 import (
 	"net/http"
 
-	"gopkg.in/go-on/wrap.v2"
-	"gopkg.in/go-on/nosurf.v1"
+	"github.com/go-on/nosurf"
+	"github.com/go-on/wrap"
 )
 
 // Token is the type that is saved inside a wrap.Contexter and

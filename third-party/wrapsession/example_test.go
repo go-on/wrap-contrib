@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"gopkg.in/go-on/wrap.v2"
-	"gopkg.in/go-on/wrap-contrib.v2/stack"
-	"gopkg.in/go-on/wrap-contrib.v2/third-party/wrapsession"
-	"gopkg.in/go-on/wrap-contrib.v2/wraps"
-	"gopkg.in/go-on/sessions.v1"
+	"github.com/go-on/sessions"
+	"github.com/go-on/wrap"
+	"github.com/go-on/wrap-contrib/stack"
+	"github.com/go-on/wrap-contrib/third-party/wrapsession"
+	"github.com/go-on/wrap-contrib/wraps"
 )
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))

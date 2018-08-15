@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"testing"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 	. "gopkg.in/go-on/wrap-contrib.v2/helper"
 )
 
@@ -101,37 +101,37 @@ func TestDispatch(t *testing.T) {
 	)
 
 	tests := map[dispatchQ]string{
-		dispatchQ{"GET", "/?name=peter"}: "peter",
-		dispatchQ{"GET", "/?name=paul"}:  "paul",
-		dispatchQ{"POST", "/hi"}:         "ho",
-		dispatchQ{"GET", "/hi"}:          "hi",
+		{"GET", "/?name=peter"}: "peter",
+		{"GET", "/?name=paul"}:  "paul",
+		{"POST", "/hi"}:         "ho",
+		{"GET", "/hi"}:          "hi",
 
-		dispatchQ{"GET", "/person"}:     "get person",
-		dispatchQ{"POST", "/person"}:    "post person",
-		dispatchQ{"PATCH", "/person"}:   "patch person",
-		dispatchQ{"DELETE", "/person"}:  "delete person",
-		dispatchQ{"HEAD", "/person"}:    "head person",
-		dispatchQ{"PUT", "/person"}:     "put person",
-		dispatchQ{"OPTIONS", "/person"}: "options person",
-		dispatchQ{"TRACE", "/person"}:   "",
+		{"GET", "/person"}:     "get person",
+		{"POST", "/person"}:    "post person",
+		{"PATCH", "/person"}:   "patch person",
+		{"DELETE", "/person"}:  "delete person",
+		{"HEAD", "/person"}:    "head person",
+		{"PUT", "/person"}:     "put person",
+		{"OPTIONS", "/person"}: "options person",
+		{"TRACE", "/person"}:   "",
 
-		dispatchQ{"GET", "/company"}:     "get company",
-		dispatchQ{"POST", "/company"}:    "post company",
-		dispatchQ{"PATCH", "/company"}:   "patch company",
-		dispatchQ{"DELETE", "/company"}:  "delete company",
-		dispatchQ{"HEAD", "/company"}:    "head company",
-		dispatchQ{"PUT", "/company"}:     "put company",
-		dispatchQ{"OPTIONS", "/company"}: "options company",
+		{"GET", "/company"}:     "get company",
+		{"POST", "/company"}:    "post company",
+		{"PATCH", "/company"}:   "patch company",
+		{"DELETE", "/company"}:  "delete company",
+		{"HEAD", "/company"}:    "head company",
+		{"PUT", "/company"}:     "put company",
+		{"OPTIONS", "/company"}: "options company",
 
-		dispatchQ{"GET", "/a"}:       "is a",
-		dispatchQ{"GET", "/b"}:       "is b",
-		dispatchQ{"GET", "/blubb"}:   "",
-		dispatchQ{"OPTIONS", "/xyz"}: "my options",
-		dispatchQ{"GET", "/hu"}:      "get hu",
+		{"GET", "/a"}:       "is a",
+		{"GET", "/b"}:       "is b",
+		{"GET", "/blubb"}:   "",
+		{"OPTIONS", "/xyz"}: "my options",
+		{"GET", "/hu"}:      "get hu",
 
-		dispatchQ{"GET", "/xyz"}: "",
+		{"GET", "/xyz"}: "",
 
-		dispatchQ{"GET", "/person/customer/6"}: "person customers",
+		{"GET", "/person/customer/6"}: "person customers",
 
 		// dispatchQ{"GET", "/context/black?d=ddd&e=eee"}:   `black: d is "ddd" e is "eee"`,
 		// dispatchQ{"GET", "/context/white?d=dddd&e=eeee"}: `white: d is "dddd" e is "eeee"`,

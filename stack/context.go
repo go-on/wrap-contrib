@@ -3,7 +3,7 @@ package stack
 import (
 	"net/http"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.in/go-on/wrap"
 )
 
 // basicContext is a simple basic context that supports the setting and getting of errors

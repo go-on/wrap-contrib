@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 	"gopkg.in/go-on/wrap-contrib.v2/helper"
 	// "fmt"
 	//. "launchpad.net/gocheck"

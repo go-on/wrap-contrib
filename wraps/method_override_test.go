@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 	"gopkg.in/go-on/wrap-contrib.v2/helper"
 )
 
@@ -132,7 +132,7 @@ func TestMethodOverrideByFieldNotAllowed1(t *testing.T) {
 	stack.ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusPreconditionFailed {
-		t.Error("expecting code 412, got: %d", rec.Code)
+		t.Errorf("expecting code 412, got: %d", rec.Code)
 	}
 
 }
@@ -152,7 +152,7 @@ func TestMethodOverrideByFieldNotAllowed2(t *testing.T) {
 	stack.ServeHTTP(rec, req)
 	//err := helper.AssertResponse(rec, "_method with value OPTIONS only allowed for GET requests.POST", 412)
 	if rec.Code != http.StatusPreconditionFailed {
-		t.Error("expecting code 412, got: %d", rec.Code)
+		t.Errorf("expecting code 412, got: %d", rec.Code)
 	}
 }
 

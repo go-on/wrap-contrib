@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/wrap"
 	"gopkg.in/go-on/wrap-contrib.v2/third-party/wrapnosurf"
 )
 

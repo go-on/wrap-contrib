@@ -11,9 +11,9 @@ package wrapsession
 import (
 	"net/http"
 
-	"gopkg.in/go-on/wrap.v2"
-	"gopkg.in/go-on/context.v1"
-	"gopkg.in/go-on/sessions.v1"
+	"github.com/go-on/context"
+	"github.com/go-on/sessions"
+	"github.com/go-on/wrap"
 )
 
 type session struct {

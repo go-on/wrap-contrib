@@ -1,8 +1,8 @@
 package wraps
 
 import (
-	"gopkg.in/go-on/method.v1"
-	"gopkg.in/go-on/wrap.v2"
+	"github.com/go-on/method"
+	"github.com/go-on/wrap"
 
 	"net/http"
 )

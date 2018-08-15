@@ -10,8 +10,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/go-on/wrap"
 	"gopkg.in/go-on/go-http-auth.v1"
-	"gopkg.in/go-on/wrap.v2"
 )
 
 type digest struct {
